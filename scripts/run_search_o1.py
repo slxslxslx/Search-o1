@@ -174,7 +174,9 @@ def parse_args():
     return parser.parse_args()
 
 def main():
+    print("[DEBUG] Starting main()")
     args = parse_args()
+    print(f"[DEBUG] Arguments: {args}")
 
     # Extract arguments
     dataset_name = args.dataset_name
@@ -253,10 +255,12 @@ def main():
             json.dump(url_cache, f, ensure_ascii=False, indent=2)
 
     # ---------------------- Model Loading ----------------------
+    print("[DEBUG] Loading tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = 'left'
+    print("[DEBUG] Tokenizer loaded")
 
     # Define output directory based on model and dataset
     if 'qwq' in model_path.lower():
@@ -270,17 +274,23 @@ def main():
         model_short_name = model_path.split('/')[-1].lower().replace('-instruct', '')
         output_dir = f'./outputs/runs.baselines/{dataset_name}.{model_short_name}.search_o1'
     os.makedirs(output_dir, exist_ok=True)
+    print(f"[DEBUG] Output directory: {output_dir}")
 
     # Initialize the LLM
+    print("[DEBUG] Initializing vLLM LLM... (this may take a while)")
     llm = LLM(
         model=model_path,
-        tensor_parallel_size=torch.cuda.device_count(),
-        gpu_memory_utilization=0.95,
+        # tensor_parallel_size=torch.cuda.device_count(),
+        tensor_parallel_size=2,  
+        gpu_memory_utilization=0.7,
     )
+    print("[DEBUG] vLLM LLM initialized successfully")
 
     # ---------------------- Data Loading ----------------------
+    print(f"[DEBUG] Loading data from {data_path}")
     with open(data_path, 'r', encoding='utf-8') as json_file:
         filtered_data = json.load(json_file)
+    print(f"[DEBUG] Loaded {len(filtered_data)} items from dataset")
 
     # ---------------------- Batch Generation Function ----------------------
     def generate_webpage_to_reasonchain_batch(
@@ -293,13 +303,19 @@ def main():
         max_tokens: int = 32768,
         coherent: bool = False,
     ) -> List[str]:
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch: processing {len(original_questions)} items")
         user_prompts = [
             get_webpage_to_reasonchain_instruction(r, sq, doc)
             for r, sq, doc in zip(prev_reasonings, search_queries, documents)
         ]
 
         prompts = [{"role": "user", "content": up} for up in user_prompts]
-        prompts = [tokenizer.apply_chat_template([p], tokenize=False, add_generation_prompt=True) for p in prompts]
+        # prompts = [tokenizer.apply_chat_template([p], tokenize=False, add_generation_prompt=True) for p in prompts]
+        # 开思考模式
+        prompts = [tokenizer.apply_chat_template(
+            [p], tokenize=False, add_generation_prompt=True,
+            chat_template_kwargs={"enable_thinking": True}
+        ) for p in prompts]
 
         output = llm.generate(
             prompts,
@@ -311,6 +327,7 @@ def main():
                 repetition_penalty=1.05,
             )
         )
+        print("[DEBUG] llm.generate for webpage analysis completed")
 
         raw_outputs = [out.outputs[0].text for out in output]
         extracted_infos = [extract_answer(raw, mode='infogen') for raw in raw_outputs]
@@ -325,6 +342,7 @@ def main():
         return extracted_infos
 
     # ---------------------- Preparation of Input Prompts ----------------------
+    print("[DEBUG] Building input prompts for all items...")
     input_list = []
     for item in filtered_data:
         question = item['Question']
@@ -366,12 +384,18 @@ def main():
             user_prompt = ""  # Default to empty if dataset not matched
 
         prompt = [{"role": "user", "content": instruction + user_prompt}]
-        prompt = tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)
+        # prompt = tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)
+        # 开3.5思考
+        prompt = tokenizer.apply_chat_template(
+            prompt, tokenize=False, add_generation_prompt=True,
+            chat_template_kwargs={"enable_thinking": True}  # 开启思考模式
+        )
         input_list.append(prompt)
 
     if subset_num != -1:
         input_list = input_list[:subset_num]
         filtered_data = filtered_data[:subset_num]
+    print(f"[DEBUG] Total prompts prepared: {len(input_list)}")
 
     # Initialize active sequences
     active_sequences = [{
@@ -383,6 +407,7 @@ def main():
         'search_count': 0,
         'executed_search_queries': set(),
     } for item, prompt in zip(filtered_data, input_list)]
+    print("[DEBUG] Active sequences initialized")
 
     # ---------------------- Set Max Tokens ----------------------
     if 'qwq' in model_path.lower():
@@ -392,10 +417,12 @@ def main():
             max_tokens = 20480
     else:
         max_tokens = 8192
+    print(f"[DEBUG] Max generation tokens set to {max_tokens}")
 
     # ---------------------- Generation Function ----------------------
     def run_generation(sequences: List[Dict], max_tokens: int) -> List:
         prompts = [s['prompt'] for s in sequences]
+        print(f"[DEBUG] run_generation: {len(prompts)} prompts, max_tokens={max_tokens}")
         sampling_params = SamplingParams(
             max_tokens=max_tokens,
             temperature=temperature,
@@ -406,6 +433,7 @@ def main():
             include_stop_str_in_output=True,
         )
         output_list = llm.generate(prompts, sampling_params=sampling_params)
+        print("[DEBUG] run_generation: llm.generate completed")
         return output_list
 
     # Function to extract text between two tags
@@ -492,10 +520,13 @@ def main():
     start_time = time.time()
     turn = 0
 
+    print("[DEBUG] Starting main interaction loop...")
+
     # Main loop until all sequences are finished or maximum turns reached
     while True:
         # Identify sequences that need generation
         sequences_needing_generation = [seq for seq in active_sequences if not seq['finished']]
+        print(f"[DEBUG] Main loop: {len(sequences_needing_generation)} active sequences, turn={turn}")
 
         if sequences_needing_generation:
             turn += 1
@@ -530,7 +561,9 @@ def main():
 
                 # If a search query is present and needs to be executed
                 if search_query and seq['output'].rstrip().endswith(END_SEARCH_QUERY):
+                    print(f"[DEBUG] Search query detected: '{search_query}'")
                     if seq['search_count'] < MAX_SEARCH_LIMIT and search_query not in seq['executed_search_queries']:
+                        print(f"[DEBUG] Executing search for query: {search_query}")
                         # Execute search, use cache if available
                         if search_query in search_cache:
                             results = search_cache[search_query]
@@ -556,6 +589,7 @@ def main():
                         # Filter URLs that are not cached
                         urls_to_fetch_filtered = [u for u in urls_to_fetch if u not in url_cache]
                         cached_urls = [u for u in urls_to_fetch if u in url_cache]
+                        print(f"[DEBUG] URLs to fetch: {len(urls_to_fetch_filtered)} (cached: {len(urls_to_fetch)-len(urls_to_fetch_filtered)})")
 
                         # Store info for all_urls_to_fetch and url_snippets
                         for url in urls_to_fetch_filtered:
@@ -614,7 +648,7 @@ def main():
 
             # Batch fetch all URLs at once to optimize speed
             if all_urls_to_fetch:
-                print(f"Fetching {len(all_urls_to_fetch)} URLs...")
+                print(f"[DEBUG] Fetching {len(all_urls_to_fetch)} URLs...")
                 try:
                     fetched_contents = fetch_page_content(
                         list(all_urls_to_fetch),
@@ -678,13 +712,16 @@ def main():
         # Check if all sequences are finished
         unfinished = [seq for seq in active_sequences if not seq['finished']]
         if not unfinished:
+            print("[DEBUG] All sequences finished. Exiting loop.")
             break
         else:
             if turn >= MAX_TURN:
                 print(f"Maximum number of turns ({MAX_TURN}) reached, stopping.")
                 break
+            print(f"[DEBUG] {len(unfinished)} sequences still active, continuing to next turn...")
 
     total_time = time.time() - start_time
+    print(f"[DEBUG] Total execution time: {total_time:.2f} seconds")
 
     # ---------------------- Save Batch Output Records to JSON File ----------------------
     # Define output JSON file path
@@ -694,6 +731,7 @@ def main():
     # Save batch_output_records to JSON file
     with open(batch_output_file, 'w', encoding='utf-8') as f:
         json.dump(batch_output_records, f, ensure_ascii=False, indent=2)
+    print(f"Batch outputs saved to {batch_output_file}")
 
     print(f"Batch outputs saved to {batch_output_file}")
 
@@ -726,4 +764,6 @@ def main():
     print("Process completed.")
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.set_start_method('spawn', force=True)
     main()
