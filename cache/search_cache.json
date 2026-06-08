@@ -1,9 +1,354 @@
 {
-  "Citibank founded year": {},
-  "when was Citibank founded": {},
-  "Citibank history establishment": {},
-  "Citibank 1812": {},
-  "Citibank origin": {},
-  "City Bank of New York founded": {},
-  "who was president when Citibank was founded": {}
+  "Citibank history establishment": {
+    "webPages": {
+      "value": [
+        {
+          "id": 1,
+          "name": "",
+          "url": "https://www.citi.com/icg/sa/emea/slovakia/english/insights/history.html",
+          "siteName": "Answer Box",
+          "datePublished": "",
+          "snippet": "Citi started to operate its business activities in 1812 in New York under its original name First National City Bank. Since then, Citi has been a major player in some of the world's most innovative breakthroughs in banking, for ex. the pioneering of the world's first ATM."
+        },
+        {
+          "id": 2,
+          "name": "Citibank - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Citibank",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Citibank was founded in 1812 as City Bank of New York, and later became First National City Bank of New York. The bank has branches in 19 countries."
+        },
+        {
+          "id": 3,
+          "name": "A bank with history and tradition - Citi.com",
+          "url": "https://www.citibank.com/icg/sa/emea/czech/english/insights/history.html",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Citibank opened for business in 1812 in New York under its original name City Bank of New York. Since then, Citi has been a major player in some of the world's ..."
+        },
+        {
+          "id": 4,
+          "name": "[PDF] Citi Historic Records Review Summary The history of Citigroup Inc ...",
+          "url": "https://www.citigroup.com/rcs/citigpa/storage/public/Citi%20Historic%20Records%20Review%20Summary.pdf",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "The history of Citigroup Inc. (“Citi”) dates back to the founding of the City Bank of New. York in 1812. As identified in Attachment A, most of Citi's ..."
+        },
+        {
+          "id": 5,
+          "name": "From 1812 Origins to One of America's Largest Banks - YouTube",
+          "url": "https://www.youtube.com/watch?v=ah0V2gCDa80",
+          "siteName": "",
+          "datePublished": "Mar 8, 2026",
+          "snippet": "How did Citibank grow from a small bank founded in 1812 in New York City into one of the largest financial institutions in the United States ..."
+        },
+        {
+          "id": 6,
+          "name": "Citibank: History and Corporate Overview | PDF - Scribd",
+          "url": "https://www.scribd.com/document/152257645/Citibank-doc",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Citibank, N.A. is a major American bank that was founded in 1812 as the City Bank of New York. Over its long history, Citibank has grown significantly in ..."
+        },
+        {
+          "id": 7,
+          "name": "Citigroup - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Citigroup",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "The company was formed in 1998 by the merger of Citicorp, the bank holding company for Citibank, and Travelers; Travelers was spun off from the company in 2002."
+        },
+        {
+          "id": 8,
+          "name": "What is Brief History of Citi Company? - Matrix BCG",
+          "url": "https://matrixbcg.com/blogs/brief-history/citigroup?srsltid=AfmBOopxNEZ1eVtZaBGHv9gFWL_O9JEFfbzYrzQ96sPPijJXcATp7dRI",
+          "siteName": "",
+          "datePublished": "Sep 18, 2025",
+          "snippet": "The bank commenced operations on September 14, 1812, established by New York merchants to fill the financial void left by the first Bank of the ..."
+        },
+        {
+          "id": 9,
+          "name": "Citigroup | Business and Management | Research Starters - EBSCO",
+          "url": "https://www.ebsco.com/research-starters/business-and-management/citigroup",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Citicorp had been the holding company of Citibank, which had been established in 1812 as the City Bank of New York. It had been set up by New York merchants who ..."
+        },
+        {
+          "id": 10,
+          "name": "Citibank: Teetering Since 1812 - TIME",
+          "url": "https://time.com/archive/6687482/citibank-teetering-since-1812/",
+          "siteName": "",
+          "datePublished": "Jan 21, 2009",
+          "snippet": "City Bank of New York was founded in 1812 by a group of merchants hoping to fill the void left by the demise of the first Bank of the United States."
+        }
+      ]
+    }
+  },
+  "US President 1812": {
+    "webPages": {
+      "value": [
+        {
+          "id": 1,
+          "name": "James Madison",
+          "url": "https://en.wikipedia.org/wiki/James_Madison",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "James Madison was an American statesman, diplomat, and Founding Father who served as the fourth president of the United States from 1809 to 1817."
+        },
+        {
+          "id": 2,
+          "name": "James Madison",
+          "url": "https://www.whitehousehistory.org/bios/james-madison",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "The oldest of twelve children, James Madison was born on March 16, 1751 to James and Nelly Madison. James Sr. was a slave owner and planter."
+        },
+        {
+          "id": 3,
+          "name": "James Madison",
+          "url": "https://clintonwhitehouse3.archives.gov/WH/glimpse/presidents/html/jm4.html",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "James Madison, \"Father of the Constitution,\" led the inconclusive War of 1812. Biography: At his inauguration, James Madison, a small, wizened man, appeared ..."
+        },
+        {
+          "id": 4,
+          "name": "Video: President Madison & the 1812 War | History & Impact",
+          "url": "https://study.com/academy/lesson/video/president-madison-and-the-war-of-1812.html",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "This video examines James Madison's presidency during the War of 1812 and the challenges he faced on two fronts."
+        },
+        {
+          "id": 5,
+          "name": "James Madison - Key Events",
+          "url": "https://millercenter.org/president/james-madison/key-events",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Jefferson's secretary of state, Republican-Democrat James Madison, emerges victorious. Madison swamps Federalist opponent Charles C. Pinckney in electoral votes ..."
+        },
+        {
+          "id": 6,
+          "name": "1812 United States presidential election",
+          "url": "https://en.wikipedia.org/wiki/1812_United_States_presidential_election",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Presidential elections were held in the United States from October 30 to December 2, 1812. In the shadow of the War of 1812, incumbent Democratic-Republican ..."
+        },
+        {
+          "id": 7,
+          "name": "1812 Presidential Election of James Madison: Topics in ...",
+          "url": "https://guides.loc.gov/chronicling-america-1812-presidential-election",
+          "siteName": "",
+          "datePublished": "4 days ago",
+          "snippet": "In 1812, James Madison is re-elected President. This guide provides access to materials related to the \"1812 Presidential Election” in the ..."
+        },
+        {
+          "id": 8,
+          "name": "All About James Madison for Kids | Twinkl USA",
+          "url": "https://www.youtube.com/watch?v=I5zY1e-cg9k",
+          "siteName": "",
+          "datePublished": "1 year ago",
+          "snippet": "In this video, children will learn about the life of America's fourth president, James Madison. 00:00 Who is James Madison?"
+        },
+        {
+          "id": 9,
+          "name": "James Madison, the Bill of Rights, & the War of 1812",
+          "url": "https://www.britannica.com/video/overview-James-Madison/-189608",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "James Madison the fourth president of the United States is known as the father of the constitution he also sponsored the bill of rights."
+        },
+        {
+          "id": 10,
+          "name": "President James Madison",
+          "url": "https://www.history.navy.mil/our-collections/art/travelling-exhibits/the-war-of-1812/declaration-of-war/president-james-madison.html",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "James Madison (1751-1836) was a principal author of the United States Constitution. During the Jefferson administration, Madison served as Secretary of State."
+        }
+      ]
+    }
+  },
+  "Citibank founded year": {
+    "webPages": {
+      "value": [
+        {
+          "id": 1,
+          "name": "Citibank: Banking company",
+          "url": "https://en.wikipedia.org/wiki/Citibank",
+          "siteName": "Knowledge Graph",
+          "datePublished": "",
+          "snippet": "Citibank, N.A. is the primary U.S. banking subsidiary of Citigroup, a financial services multinational corporation. Citibank was founded in 1812 as City Bank of New York, and later became First National City Bank of New York. The bank has branches.... Customer service chat: Online Chat. Credit card support: 1 (800) 950-5114. Headquarters: New York, NY. Founder: Samuel Osgood. Founded: June 16, 1812, New York, NY. Costco customer service: 1-855-378-6467. Parent organizations: Citigroup and Citicorp LLC"
+        },
+        {
+          "id": 2,
+          "name": "Heritage | About Us - Citi",
+          "url": "https://www.citigroup.com/global/about-us/heritage",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "1800-1819. Our beginnings · 1812. A new bank born in New York. In 1811, a group of merchants takes the first steps towards setting up a new bank to help New York ..."
+        },
+        {
+          "id": 3,
+          "name": "Citigroup - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Citigroup",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "The company was formed in 1998 by the merger of Citicorp, the bank holding company for Citibank, and Travelers; Travelers was spun off from the company in 2002."
+        },
+        {
+          "id": 4,
+          "name": "A bank with history and tradition - Citi.com",
+          "url": "https://www.citibank.com/icg/sa/emea/czech/english/insights/history.html",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Citibank opened for business in 1812 in New York under its original name City Bank of New York. Since then, Citi has been a major player in some of the world's ..."
+        },
+        {
+          "id": 5,
+          "name": "Citibank - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Citibank",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Citibank was founded in 1812 as City Bank of New York, and later became First National City Bank of New York."
+        },
+        {
+          "id": 6,
+          "name": "[PDF] Citi Historic Records Review Summary The history of Citigroup Inc ...",
+          "url": "https://www.citigroup.com/rcs/citigpa/storage/public/Citi%20Historic%20Records%20Review%20Summary.pdf",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "The history of Citigroup Inc. (“Citi”) dates back to the founding of the City Bank of New. York in 1812. As identified in Attachment A, most of Citi's ..."
+        },
+        {
+          "id": 7,
+          "name": "Citigroup | Business and Management | Research Starters - EBSCO",
+          "url": "https://www.ebsco.com/research-starters/business-and-management/citigroup",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "It was formed in 1998 from a merger of the banking corporation Citicorp and the insurance company Travelers Group. The oldest institution in the bank's history ..."
+        },
+        {
+          "id": 8,
+          "name": "Citi - A bank with history and tradition - Insights",
+          "url": "https://www.citi.com/icg/sa/emea/slovakia/english/insights/history.html",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Citi started to operate its business activities in 1812 in New York under its original name First National City Bank. Since then, Citi has been a major player ..."
+        },
+        {
+          "id": 9,
+          "name": "Citibank: History and Corporate Overview | PDF - Scribd",
+          "url": "https://www.scribd.com/document/152257645/Citibank-doc",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Citibank, N.A. is a major American bank that was founded in 1812 as the City Bank of New York. Over its long history, Citibank has grown significantly in size ..."
+        },
+        {
+          "id": 10,
+          "name": "From 1812 Origins to One of America's Largest Banks - YouTube",
+          "url": "https://www.youtube.com/watch?v=ah0V2gCDa80",
+          "siteName": "",
+          "datePublished": "Mar 8, 2026",
+          "snippet": "How did Citibank grow from a small bank founded in 1812 in New York City into one of the largest financial institutions in the United States ..."
+        },
+        {
+          "id": 11,
+          "name": "What is Brief History of Citi Company? - Matrix BCG",
+          "url": "https://matrixbcg.com/blogs/brief-history/citigroup?srsltid=AfmBOoq1X-ifjVFfD6NUOoDcf0FW2R5QQrKe7WmMNhI7z81wsXbABYNl",
+          "siteName": "",
+          "datePublished": "Sep 18, 2025",
+          "snippet": "The genesis of Citi, originally named the City Bank of New York, dates back to June 16, 1812, when it received its charter in New York City. The ..."
+        }
+      ]
+    }
+  },
+  "President of the United States in 1812": {
+    "webPages": {
+      "value": [
+        {
+          "id": 1,
+          "name": "James Madison - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/James_Madison",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "James Madison was an American statesman, diplomat, and Founding Father who served as the fourth president of the United States from 1809 to 1817."
+        },
+        {
+          "id": 2,
+          "name": "Key American Personalities | 1812 Virtual Exhibition",
+          "url": "https://www.warmuseum.ca/war-of-1812/explore-history/the-american-war/key-american-personalities/",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "... United Kingdom and the United States of America.” — James Madison, President of the United States, 18 June 1812. James Madison. Painted by James Gilbert"
+        },
+        {
+          "id": 3,
+          "name": "James Madison - The White House",
+          "url": "https://clintonwhitehouse3.archives.gov/WH/glimpse/presidents/html/jm4.html",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "James Madison, \"Father of the Constitution,\" led the inconclusive War of 1812. Biography: At his inauguration, James Madison, a small, wizened man, appeared ..."
+        },
+        {
+          "id": 4,
+          "name": "The War of 1812: The Nation Braces for War",
+          "url": "https://sharetngov.tnsosfiles.com/tsla/exhibits/1812/index.htm",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "James Madison, the Father of the Constitution and the Bill of Rights, was President of the United States during the War of 1812. Great Britain's seizure of ..."
+        },
+        {
+          "id": 5,
+          "name": "James Madison's Presidency: the War of 1812 & the Monroe Doctrine",
+          "url": "https://study.com/academy/lesson/video/james-madisons-presidency-the-war-of-1812-the-monroe-doctrine.html",
+          "siteName": "",
+          "datePublished": "Feb 14, 2024",
+          "snippet": "Madison, part of the Virginia Dynasty, was a brilliant intellectual who helped write the Constitution despite being physically unimposing. The War of 1812 (1812 ..."
+        },
+        {
+          "id": 6,
+          "name": "James Madison - White House Historical Association",
+          "url": "https://www.whitehousehistory.org/bios/james-madison",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "In 1808, Madison was elected as the fourth President of the United States. ... On June 18, 1812, the United States declared war on Great Britain. The War ..."
+        },
+        {
+          "id": 7,
+          "name": "1812 United States presidential election - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/1812_United_States_presidential_election",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Incumbent Democratic-Republican President James Madison narrowly defeated DeWitt Clinton, the lieutenant governor of New York and mayor of New York City."
+        },
+        {
+          "id": 8,
+          "name": "1812 Presidential Election of James Madison: Topics in Chronicling ...",
+          "url": "https://guides.loc.gov/chronicling-america-1812-presidential-election",
+          "siteName": "",
+          "datePublished": "4 days ago",
+          "snippet": "In the 1812 presidential election, President James Madison won re-election while the United States was engaged in the War of 1812. This was ..."
+        },
+        {
+          "id": 9,
+          "name": "#OnThisDay in 1812, President James Madison signs a resolution ...",
+          "url": "https://www.facebook.com/constitutionctr/posts/onthisday-in-1812-president-james-madison-signs-a-resolution-declaring-war-again/1133228275504523/",
+          "siteName": "",
+          "datePublished": "Jun 18, 2025",
+          "snippet": "June 18th 1812 US president James Madison signs legislature declaring war against Great Britain. One of the main causes of what would be known ..."
+        },
+        {
+          "id": 10,
+          "name": "Proclamation—Announcement of a State of War Between the United ...",
+          "url": "https://www.presidency.ucsb.edu/documents/proclamation-announcement-state-war-between-the-united-states-and-the-united-kingdom",
+          "siteName": "",
+          "datePublished": "",
+          "snippet": "Done at the city of Washington, the 19th day of June, 1812, and of the Independence of the United States the thirty-sixth. By the President: JAMES MADISON."
+        }
+      ]
+    }
+  }
 }
