@@ -152,7 +152,8 @@ def extract_text_from_url(url, use_jina=False, jina_api_key=None, snippet: Optio
             
             # Remove URLs
             pattern = r"\(https?:.*?\)|\[https?:.*?\]"
-            text = re.sub(pattern, "", response).replace('---','-').replace('===','=').replace('   ',' ').replace('   ',' ')
+            # text = re.sub(pattern, "", response).replace('---','-').replace('===','=').replace('   ',' ').replace('   ',' ')
+            text = re.sub(pattern, "", response_text).replace('---', '-').replace('===', '=').replace('   ',' ').replace('   ',' ')
         
         
         else:
