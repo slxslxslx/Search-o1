@@ -6,8 +6,8 @@ from tqdm import tqdm
 from typing import List, Dict, Optional, Tuple
 import argparse
 
-from bing_search import (
-    bing_web_search,
+from google_search import (
+    google_web_search,   # !!!!!!!!!!!!
     extract_relevant_info,
     fetch_page_content,
     extract_snippet_with_context,

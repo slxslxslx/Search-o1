@@ -12,7 +12,7 @@ import argparse
 
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
-from bing_search import bing_web_search, extract_relevant_info, fetch_page_content
+from google_search import google_web_search, extract_relevant_info, fetch_page_content  # !!!!!!!!!!!!
 from evaluate import run_evaluation
 from prompts import (
     get_singleqa_rag_agent_instruction, 

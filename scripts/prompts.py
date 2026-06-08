@@ -66,6 +66,19 @@ def get_code_search_o1_instruction(MAX_SEARCH_LIMIT):
     )
 
 
+# 生成一个结构化提示词（Prompt），用于指导大语言模型（LLM）分析网页内容并整合到推理链中。将"网页搜索 → 信息筛选 → 推理链更新"封装为标准化提示词的函数，是构建自主研究型 Agent（如 ReAct、Reflexion 等架构）的关键组件。
+# 这是一个Agent 系统中的"工具调用指令模板"
+# 参数：
+    # prev_reasoning	之前的推理步骤（已有的思考过程）
+    # search_query	当前搜索查询（需要解答的具体问题）
+    # document	搜索到的网页内容（原始素材）
+# 生成的提示词结构：
+# 任务指令
+# ├── 分析网页（要求逐页审查）
+# ├── 提取相关信息（筛选与查询相关的事实）
+# └── 输出格式（两种分支）
+#     ├── 有帮助 → 输出 "**Final Information**" + 内容
+#     └── 无帮助 → 输出 "**Final Information**" + "No helpful information found."
 def get_webpage_to_reasonchain_instruction(prev_reasoning, search_query, document):
     return f"""**Task Instruction:**
 
