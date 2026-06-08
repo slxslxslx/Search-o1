@@ -9,15 +9,20 @@ from lcb_runner.evaluation import codegen_metrics
 from utils.math_equivalence import is_equiv
 
 
+# 从模型输出中提取特定格式的答案。它支持三种模式
 def extract_answer(output, mode='gen'):
+    """
+    output: 模型的原始输出文本
+    mode: 提取模式，默认为 'gen'
+    """
     extracted_text = ''
-    if mode == 'codegen':
+    if mode == 'codegen':  # 代码提取： 从 Markdown 代码块中提取 Python 代码
         # Extract the code between ```python and ```
         pattern = r'```python\s*(.*?)\s*```'
         matches = re.findall(pattern, output, re.DOTALL | re.IGNORECASE)
         if matches:
             extracted_text = matches[-1].strip()  # Take the last match
-    elif mode == 'infogen':
+    elif mode == 'infogen':  # 信息提取：提取特定标记后的内容：优先查找 **Final Information**，其次查找 **Modified Reasoning Steps**，清理换行符和反引号
         # Extract content after **Final Information** or **Modified Reasoning Steps**
         pattern_info = "**Final Information**"
         pattern_step = "**Modified Reasoning Steps**"
@@ -27,7 +32,7 @@ def extract_answer(output, mode='gen'):
             extracted_text = output.split(pattern_step)[-1].strip("```").strip()
         else:
             extracted_text = "No helpful information found."
-    else:
+    else:  # mode='gen' / mode='choose' / mode='qa' 标准答案提取
         # Existing extraction logic for 'gen' and 'choose' modes
         pattern = r'\\boxed\{(.*)\}'
         matches = re.findall(pattern, output)
@@ -44,11 +49,13 @@ def extract_answer(output, mode='gen'):
 
 
 def normalize_answer(text):
+    print(f"evaluate.py里面的 normalize_answer()被执行了，text：{text}")
     text = text.lower()
     text = " ".join(text.strip().split())
     return text
 
 def normalize_answer_qa(s):
+    print(f"evaluate.py里面的 normalize_answer_qa()被执行了，s：{s}")
     def remove_articles(text):
         return re.sub(r"\b(a|an|the)\b", " ", text)
     def white_space_fix(text):
@@ -64,10 +71,15 @@ def normalize_answer_qa(s):
 def evaluate_predictions(output, labeled_answer, mode='gen'):
     final_metric = {"is_valid_answer": False, "acc": 0, "em": 0, "f1": 0, 'math_equal': 0}
     pred_answer = extract_answer(output, mode=mode)
+    print(f"evaluate.py里面的 mode:{mode}")
+    print(f"evaluate.py里面的 evaluate_predictions:{evaluate_predictions}")
+    print(f"evaluate.py里面的 labeled_answer:{labeled_answer}")  # gold answer
     if pred_answer != '':
         final_metric["is_valid_answer"] = True
 
     if mode == 'qa':
+        if isinstance(labeled_answer, str):
+            labeled_answer = [labeled_answer]
         normalized_pred_answer = normalize_answer_qa(pred_answer)
         for answer in labeled_answer:
             normalized_ground_truth = normalize_answer_qa(answer)
