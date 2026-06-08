@@ -53,26 +53,32 @@ def extract_snippet_with_context(full_text: str, snippet: str, context_chars: in
     Extract the sentence that best matches the snippet and its context from the full text.
 
     Args:
-        full_text (str): The full text extracted from the webpage.
-        snippet (str): The snippet to match.
-        context_chars (int): Number of characters to include before and after the snippet.
+        full_text (str): 从网页抓取的完整文本内容
+        snippet (str): 搜索引擎返回的摘要片段（通常几十到几百字）
+        context_chars (int): 在匹配句子前后各截取多少字符，默认 2500
 
     Returns:
         Tuple[bool, str]: The first element indicates whether extraction was successful, the second element is the extracted context.
     """
+    print(f"google_search.py里面的 extract_snippet_with_context() 传入的len(full_text)：{len(full_text)}")
+    print(f"google_search.py里面的 extract_snippet_with_context() 传入的snippet：{snippet}")
+    print(f"google_search.py里面的 extract_snippet_with_context() 传入的context_chars：{context_chars}")
     try:
         full_text = full_text[:50000]
 
         snippet = snippet.lower()
-        snippet = remove_punctuation(snippet)
-        snippet_words = set(snippet.split())
+        snippet = remove_punctuation(snippet)  # 去掉标点
+        snippet_words = set(snippet.split())   # 拆成单词集合
+        # 原始 snippet: "Citibank was founded in 1812, in New York."
+        # 处理后: {'citibank', 'was', 'founded', 'in', '1812', 'new', 'york'}
 
-        best_sentence = None
-        best_f1 = 0.2
+        best_sentence = None  # 当前找到的最佳匹配句子
+        best_f1 = 0.2  # 最佳匹配的 F1 分数阈值（低于 0.2 不算匹配）。只有当句子与摘要的单词重叠度 F1 分数 > 0.2 时，才认为是有效匹配。这过滤掉完全不相关的句子。
 
         # sentences = re.split(r'(?<=[.!?]) +', full_text)  # Split sentences using regex, supporting ., !, ? endings
-        sentences = sent_tokenize(full_text)  # Split sentences using nltk's sent_tokenize
+        sentences = sent_tokenize(full_text)  # 用 NLTK 的 sent_tokenize 把长文本拆成句子列表。
 
+        # 遍历句子，找最佳匹配
         for sentence in sentences:
             key_sentence = sentence.lower()
             key_sentence = remove_punctuation(key_sentence)
@@ -82,15 +88,21 @@ def extract_snippet_with_context(full_text: str, snippet: str, context_chars: in
                 best_f1 = f1
                 best_sentence = sentence
 
-        if best_sentence:
+        if best_sentence:   # # 如果找到了匹配的句子
+            print(f"google_search.py里面的 extract_snippet_with_context() 找到匹配snippet的句子！！！best_sentence：{best_sentence}")
+            # # 找到最佳句子在原文中的位置
             para_start = full_text.find(best_sentence)
             para_end = para_start + len(best_sentence)
+            # # 前后各扩展 context_chars 个字符
             start_index = max(0, para_start - context_chars)
             end_index = min(len(full_text), para_end + context_chars)
+            # 截取上下文
             context = full_text[start_index:end_index]
+            print(f"google_search.py里面的 extract_snippet_with_context() 找到匹配snippet的句子！！！best_sentence：{best_sentence}\n返回的content：{context}")
             return True, context
         else:
             # If no matching sentence is found, return the first context_chars*2 characters of the full text
+            print(f"google_search.py里面的 extract_snippet_with_context() 找不到匹配snippet的句子")
             return False, full_text[:context_chars * 2]
     except Exception as e:
         return False, f"Failed to extract snippet context due to {str(e)}"
