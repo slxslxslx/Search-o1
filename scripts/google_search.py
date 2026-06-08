@@ -30,7 +30,7 @@ headers = {
 # Initialize session
 session = requests.Session()
 session.headers.update(headers)
-
+proxies = {"http": "socks5h://127.0.0.1:1824", "https": "socks5h://127.0.0.1:1824"}
 
 # 移除输入文本中的所有标点符号
 def remove_punctuation(text: str) -> str:
@@ -118,13 +118,43 @@ def extract_text_from_url(url, use_jina=False, jina_api_key=None, snippet: Optio
                 'X-Return-Format': 'markdown',
                 # 'X-With-Links-Summary': 'true'
             }
-            response = requests.get(f'https://r.jina.ai/{url}', headers=jina_headers).text
+            # # response = requests.get(f'https://r.jina.ai/{url}', headers=jina_headers).text
+            # response = requests.get(f'https://r.jina.ai/{url}' , headers=jina_headers, proxies=proxies).text
+            try:
+                resp = requests.get(
+                    f'https://r.jina.ai/{url}',
+                    headers=jina_headers,
+                    proxies=proxies,
+                    timeout=300  # 加个超时，别挂死
+                )
+                resp.raise_for_status()  # 4xx/5xx 会抛异常
+                response_text = resp.text
+            except requests.exceptions.Timeout:
+                return f"Error: Jina request timed out for {url}"
+            except requests.exceptions.HTTPError as e:
+                return f"Error: Jina HTTP error {e.response.status_code} for {url}"
+            except requests.exceptions.ConnectionError:
+                return f"Error: Jina connection failed for {url}"
+            except Exception as e:
+                return f"Error: Jina unexpected error for {url}: {str(e)}"
+            
             # Remove URLs
             pattern = r"\(https?:.*?\)|\[https?:.*?\]"
             text = re.sub(pattern, "", response).replace('---','-').replace('===','=').replace('   ',' ').replace('   ',' ')
+        
+        
         else:
-            response = session.get(url, timeout=20)  # Set timeout to 20 seconds
-            response.raise_for_status()  # Raise HTTPError if the request failed
+            try:
+                response = session.get(url, timeout=50, proxies=proxies)
+                response.raise_for_status()
+            except requests.exceptions.Timeout:
+                return f"Error: Request timed out for {url}"
+            except requests.exceptions.HTTPError as e:
+                return f"Error: HTTP {e.response.status_code} for {url}"
+            except requests.exceptions.ConnectionError:
+                return f"Error: Connection error for {url}"
+            except Exception as e:
+                return f"Error: Unexpected error for {url}: {str(e)}"
             # Determine the content type
             content_type = response.headers.get('Content-Type', '')
             if 'pdf' in content_type:
@@ -138,9 +168,11 @@ def extract_text_from_url(url, use_jina=False, jina_api_key=None, snippet: Optio
                 soup = BeautifulSoup(response.text, 'html.parser')
             text = soup.get_text(separator=' ', strip=True)
 
+        print(f"google_search.py里面的 extract_text_from_url()里面的 url:{url}fetch结果：{len(text)}")
         if snippet:
             success, context = extract_snippet_with_context(text, snippet)
             if success:
+                print(f"google_search.py里面的 extract_text_from_url()里面的 fetch全文，抽取后的结果：{context}")
                 return context
             else:
                 return text
@@ -172,6 +204,7 @@ def fetch_page_content(urls, max_workers=32, use_jina=False, jina_api_key=None, 
         dict: A dictionary mapping URLs to the extracted content or context.
     """
     results = {}
+    failed_urls = []
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         # Use tqdm to display a progress bar
         futures = {
@@ -182,7 +215,14 @@ def fetch_page_content(urls, max_workers=32, use_jina=False, jina_api_key=None, 
             url = futures[future]
             try:
                 data = future.result()
-                results[url] = data
+                # results[url] = data
+                # ========== 新增：检查是否抓取失败 ==========
+                if data and not data.startswith("Error"):
+                    results[url] = data
+                else:
+                    failed_urls.append(url)
+                    print(f"[Warning] Failed to fetch {url}: {data}")
+                # ============================================
             except Exception as exc:
                 results[url] = f"Error fetching {url}: {exc}"
             time.sleep(0.2)  # Simple rate limiting
@@ -397,7 +437,7 @@ def extract_pdf_text(url):
         str: Extracted text content or error message.
     """
     try:
-        response = session.get(url, timeout=20)  # Set timeout to 20 seconds
+        response = session.get(url, timeout=200, proxies=proxies)  # Set timeout to 20 seconds
         if response.status_code != 200:
             return f"Error: Unable to retrieve the PDF (status code {response.status_code})"
         
@@ -432,7 +472,7 @@ def extract_relevant_info(search_results):
         list: A list of dictionaries containing the extracted information.
     """
     useful_info = []
-    print(f"google_search.py里面的 extract_relevant_info() 传进来的search_results：{json.dumps(search_results, indent=4, ensure_ascii=False)}")
+    # print(f"google_search.py里面的 extract_relevant_info() 传进来的search_results：{json.dumps(search_results, indent=4, ensure_ascii=False)}")
     
     if 'webPages' in search_results and 'value' in search_results['webPages']:
         for id, result in enumerate(search_results['webPages']['value']):
@@ -468,7 +508,7 @@ if __name__ == "__main__":
     
     # Perform the search
     print("Performing Bing Web Search...")
-    search_results = bing_web_search(query, GOOGLE_SUBSCRIPTION_KEY, google_endpoint)
+    search_results = google_web_search(query, GOOGLE_SUBSCRIPTION_KEY, google_endpoint)
     
     print("Extracting relevant information from search results...")
     extracted_info = extract_relevant_info(search_results)  # 从 Bing 搜索返回的 JSON 结果中提取有用的信息。

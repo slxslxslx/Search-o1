@@ -767,25 +767,28 @@ def main():
 
     run_evaluation(filtered_data, input_list, output_list, dataset_name, output_dir, total_time, split)
 
-    # ---------------------- Update Search and URL Cache。 更新搜索和 URL 缓存文件。----------------------
+    # ---------------------- Update Search and URL Cache。 将本次运行产生的搜索缓存和 URL 缓存更新保存到本地文件----------------------
     print('Updating Search and URL Cache...')
     # Load existing caches or initialize empty dictionaries
+    # 加载已有的搜索缓存
     if os.path.exists(search_cache_path):
         with open(search_cache_path, 'r', encoding='utf-8') as f:
             search_cache_new = json.load(f)
     else:
         search_cache_new = {}
 
+    # 加载已有的URL 缓存
     if os.path.exists(url_cache_path):
         with open(url_cache_path, 'r', encoding='utf-8') as f:
             url_cache_new = json.load(f)
     else:
         url_cache_new = {}
 
+    # 合并缓存。两个字典合并。如果本次运行和磁盘缓存有相同的搜索查询，但返回结果不同（比如网页内容更新了），旧缓存会覆盖新缓存。这可能导致数据不一致。
     search_cache.update(search_cache_new)
     url_cache.update(url_cache_new)
 
-    save_caches()
+    save_caches()  # 将合并后的缓存写回磁盘
 
     print("Process completed.")
 
