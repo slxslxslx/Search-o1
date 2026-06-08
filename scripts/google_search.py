@@ -190,45 +190,199 @@ def fetch_page_content(urls, max_workers=32, use_jina=False, jina_api_key=None, 
 
 
 # 调用 Bing Web Search API 执行网络搜索。发送 GET 请求并设置超时时间（默认 20 秒）。返回 API 响应的 JSON 字典；若超时或请求出错，打印错误并返回空字典。
-def bing_web_search(query, subscription_key, endpoint, market='en-US', language='en', timeout=20):
+# 未指定 count 时，默认返回 10 个搜索结果。
+# def bing_web_search(query, subscription_key, endpoint, market='en-US', language='en', timeout=20):
+#     """
+#     Perform a search using the Bing Web Search API with a set timeout.
+
+#     Args:
+#         query (str): Search query.
+#         subscription_key (str): Subscription key for the Bing Search API.
+#         endpoint (str): Endpoint for the Bing Search API.
+#         market (str): Market, e.g., "en-US" or "zh-CN".
+#         language (str): Language of the results, e.g., "en".
+#         timeout (int or float or tuple): Request timeout in seconds.
+#                                          Can be a float representing the total timeout,
+#                                          or a tuple (connect timeout, read timeout).
+
+#     Returns:
+#         dict: JSON response of the search results. Returns None or raises an exception if the request times out.
+#     """
+#     headers = {
+#         "Ocp-Apim-Subscription-Key": subscription_key
+#     }
+#     params = {
+#         "q": query,
+#         "mkt": market,
+#         "setLang": language,
+#         "textDecorations": True,
+#         "textFormat": "HTML"
+#     }
+
+#     try:
+#         response = requests.get(endpoint, headers=headers, params=params, timeout=timeout)
+#         response.raise_for_status()  # Raise exception if the request failed
+#         search_results = response.json()
+#         return search_results
+#     except Timeout:
+#         print(f"Bing Web Search request timed out ({timeout} seconds) for query: {query}")
+#         return {}  # Or you can choose to raise an exception
+#     except requests.exceptions.RequestException as e:
+#         print(f"Error occurred during Bing Web Search request: {e}")
+#         return {}
+
+def google_web_search(query, subscription_key, endpoint, market="en-US",  language="en", timeout=200,
+    gl=None,                 # 显式覆盖国家
+    hl=None,                # 显式覆盖语言
+    num=None,                # 显式覆盖结果数量
+    ):
     """
-    Perform a search using the Bing Web Search API with a set timeout.
+    Google Serper 版本的 bing_web_search，返回与原 Bing 版本相同结构的字典，
+    方便 Search-o1 项目无缝切换。
 
     Args:
-        query (str): Search query.
-        subscription_key (str): Subscription key for the Bing Search API.
-        endpoint (str): Endpoint for the Bing Search API.
-        market (str): Market, e.g., "en-US" or "zh-CN".
-        language (str): Language of the results, e.g., "en".
-        timeout (int or float or tuple): Request timeout in seconds.
-                                         Can be a float representing the total timeout,
-                                         or a tuple (connect timeout, read timeout).
+        query (str): 搜索关键词.
+        subscription_key (str): Serper API Key（对应原 Bing 的 subscription_key）.
+        endpoint (str): Serper 端点，例如 "https://google.serper.dev/search"  .
+        gl (str): 显式指定 Serper 的国家码（优先于 market）.  国家
+        hl (str): 显式指定 Serper 的语言码（优先于 language）. 语言
+        timeout (int or float): 请求超时（秒）.
+        num (int): 显式指定返回结果数量（优先于 topk 默认值）.
 
     Returns:
-        dict: JSON response of the search results. Returns None or raises an exception if the request times out.
+        dict: 结构与 Bing Web Search API 响应兼容，包含 "webPages" 等字段。
     """
-    headers = {
-        "Ocp-Apim-Subscription-Key": subscription_key
-    }
+    import requests
+    from requests.exceptions import Timeout as RequestsTimeout
+
+    # 1. 从 market / language 推断默认的 gl / hl
+    #    market 形如 "en-US"，取 "-" 前部分作为国家，后部分作为语言
+    if gl is None:
+        gl = market.split("-")[-1].lower() if "-" in market else "us"
+    if hl is None:
+        hl = language.lower() if language else "en"
+
+    # 2. 构造 Serper 请求参数（参考 google.py 里的 _call_serper_api）
     params = {
         "q": query,
-        "mkt": market,
-        "setLang": language,
-        "textDecorations": True,
-        "textFormat": "HTML"
+        "gl": gl,
+        "hl": hl,
+        "num": num or 10,  # 默认 10 条，可被外部 num 参数覆盖
+        # 如需支持更多 Serper 参数，可在这里扩展
     }
 
+    headers = {
+        "X-API-KEY": subscription_key or "",
+        "Content-Type": "application/json",
+    }
+
+    # 3. 发起请求
     try:
-        response = requests.get(endpoint, headers=headers, params=params, timeout=timeout)
-        response.raise_for_status()  # Raise exception if the request failed
-        search_results = response.json()
-        return search_results
-    except Timeout:
-        print(f"Bing Web Search request timed out ({timeout} seconds) for query: {query}")
-        return {}  # Or you can choose to raise an exception
-    except requests.exceptions.RequestException as e:
-        print(f"Error occurred during Bing Web Search request: {e}")
+        response = requests.get(
+            endpoint,
+            headers=headers,
+            params=params,
+            timeout=timeout,
+        )
+        response.raise_for_status()
+        serper_data = response.json()
+        print(f"google_search.py里面的 google_web_search() 调用API结果 serper_data：{json.dumps(serper_data, indent=4, ensure_ascii=False)}")
+
+    except RequestsTimeout:
+        print(f"Google Serper request timed out ({timeout} seconds) for query: {query}")
         return {}
+    except requests.exceptions.RequestException as e:
+        print(f"Error occurred during Google Serper request: {e}")
+        return {}
+
+    # 4. 把 Serper 结果映射成 Bing 风格的响应结构
+    #    主要是构造一个 "webPages" -> "value" 列表，每项包含：
+    #    id, name(title), url, siteName, datePublished, snippet
+    bing_style_response = {"webPages": {"value": []}}
+
+    # 4.1 先处理 answerBox / knowledgeGraph，作为“高优结果”插入列表最前面
+    #     参考 google.py 的 _parse_response，把 answerBox / knowledgeGraph 视为 position=0
+    answer_box = serper_data.get("answerBox")
+    knowledge_graph = serper_data.get("knowledgeGraph")
+
+    if answer_box:
+        # 优先使用 answer，其次 snippet / snippetHighlighted
+        answer_text = (
+            answer_box.get("answer")
+            or answer_box.get("snippet")
+            or answer_box.get("snippetHighlighted", "")
+        )
+        if answer_text:
+            # 把答案框当作一条特殊网页结果，url 为空，siteName 标注来源
+            bing_style_response["webPages"]["value"].append(
+                {
+                    "id": 1,  # 后面会重新编号
+                    "name": "",  # Bing 里 name 对应标题，这里留空表示答案框
+                    "url": answer_box.get("link", ""),
+                    "siteName": "Answer Box",
+                    "datePublished": answer_box.get("date", ""),
+                    "snippet": str(answer_text).replace("\n", " "),
+                }
+            )
+
+    if knowledge_graph:
+        # 知识图谱：拼接 description + attributes 作为 snippet
+        description = knowledge_graph.get("description", "")
+        attributes = ". ".join(
+            f"{k}: {v}" for k, v in knowledge_graph.get("attributes", {}).items()
+        )
+        snippet = f"{description}. {attributes}" if attributes else description
+
+        # 标题使用 title + type
+        title = f"{knowledge_graph.get('title', '')}: {knowledge_graph.get('type', '')}"
+
+        bing_style_response["webPages"]["value"].append(
+            {
+                "id": 2,  # 后面会重新编号
+                "name": title,
+                "url": knowledge_graph.get("descriptionLink", ""),
+                "siteName": "Knowledge Graph",
+                "datePublished": knowledge_graph.get("date", ""),
+                "snippet": snippet.replace("\n", " "),
+            }
+        )
+
+    # 4.2 处理 organic 列表（普通网页结果）
+    organic_results = serper_data.get("organic", [])
+    for idx, result in enumerate(organic_results):
+        # Serper organic 结构示例：
+        # {
+        #   "title": ...,
+        #   "link": ...,
+        #   "snippet": ...,
+        #   "date": "Feb 1, 2026",   # 可选
+        #   "position": 1,
+        #   ...
+        # }
+        title = result.get("title", "")
+        url = result.get("link", "")
+        snippet = result.get("snippet", "")
+        date_str = result.get("date", "")  # Serper 可能有 date 字段
+
+        bing_style_response["webPages"]["value"].append(
+            {
+                "id": idx + 1,  # 后面会重新统一编号
+                "name": title,
+                "url": url,
+                "siteName": "",  # Serper 不提供明确的 siteName，可按需从 URL 解析
+                "datePublished": date_str,
+                "snippet": snippet,
+            }
+        )
+
+    # 4.3 重新统一编号（按原始顺序：answerBox / knowledgeGraph / organic）
+    for new_id, item in enumerate(bing_style_response["webPages"]["value"], start=1):
+        item["id"] = new_id
+
+    # 5. 如果 Serper 返回了 peopleAlsoAsk / relatedSearches，也可以按需塞进响应
+    #    这里先不处理，因为原 Bing 版本主要用 webPages，后续再扩展即可
+    print(f"google_search.py里面的 最后的bing_style_response：{bing_style_response}")
+    return bing_style_response
 
 
 # 从指定 URL 下载 PDF 文件，使用 pdfplumber 提取所有页面的文本，将每页文本拼接后，用空格连接并限制最多 600 个词（split()[:600]）。返回清理后的文本字符串，若出错则返回错误信息。
@@ -278,6 +432,7 @@ def extract_relevant_info(search_results):
         list: A list of dictionaries containing the extracted information.
     """
     useful_info = []
+    print(f"google_search.py里面的 extract_relevant_info() 传进来的search_results：{json.dumps(search_results, indent=4, ensure_ascii=False)}")
     
     if 'webPages' in search_results and 'value' in search_results['webPages']:
         for id, result in enumerate(search_results['webPages']['value']):
@@ -292,6 +447,7 @@ def extract_relevant_info(search_results):
                 'context': ''  # Reserved field to be filled later
             }
             useful_info.append(info)
+    print(f"google_search.py里面的 extract_relevant_info：{extract_relevant_info}")
     
     return useful_info
 
@@ -304,15 +460,15 @@ if __name__ == "__main__":
     query = "Structure of dimethyl fumarate"
     
     # Subscription key and endpoint for Bing Search API
-    BING_SUBSCRIPTION_KEY = "YOUR_BING_SUBSCRIPTION_KEY"
-    if not BING_SUBSCRIPTION_KEY:
+    GOOGLE_SUBSCRIPTION_KEY = "YOUR_GOOGLE_SUBSCRIPTION_KEY"
+    if not GOOGLE_SUBSCRIPTION_KEY:
         raise ValueError("Please set the BING_SEARCH_V7_SUBSCRIPTION_KEY environment variable.")
     
-    bing_endpoint = "https://api.bing.microsoft.com/v7.0/search"
+    google_endpoint = "https://api.bing.microsoft.com/v7.0/search"
     
     # Perform the search
     print("Performing Bing Web Search...")
-    search_results = bing_web_search(query, BING_SUBSCRIPTION_KEY, bing_endpoint)
+    search_results = bing_web_search(query, GOOGLE_SUBSCRIPTION_KEY, google_endpoint)
     
     print("Extracting relevant information from search results...")
     extracted_info = extract_relevant_info(search_results)  # 从 Bing 搜索返回的 JSON 结果中提取有用的信息。
