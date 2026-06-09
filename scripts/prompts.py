@@ -118,7 +118,47 @@ No helpful information found.
 
 Now you should analyze each web page and find helpful information based on the current search query "{search_query}" and previous reasoning steps.
 """
+# 再核查一下，只是大概翻译了一下
+def get_webpage_to_reasonchain_instruction_ZH(prev_reasoning, search_query, document):
+    return f"""**任务指令：**
 
+    你的任务是根据以下输入阅读并分析网页：**先前的推理步骤**、**当前搜索查询**和**搜索到的网页**。你的目标是从**搜索到的网页**中提取与**当前搜索查询**相关的有用信息，并将这些信息无缝整合到**先前的推理步骤**中，以继续针对原始问题进行推理。
+
+    **指导原则：**
+
+    1. **分析搜索到的网页：**
+    - 仔细查看每个搜索到的网页的内容。
+    - 识别与**当前搜索查询**相关的事实信息，这些信息可以帮助推进原始问题的推理过程。
+
+    2. **提取相关信息：**
+    - 从搜索到的网页中选择能够直接推进**先前推理步骤**的信息。
+    - 确保提取的信息准确且相关。
+
+    3. **输出格式：**
+    - **如果网页提供了对当前搜索查询有帮助的信息：** 以下面的格式呈现信息，以 `**Final Information**` 开头。
+    
+    **Final Information**
+    
+    [有帮助的信息]
+    
+    - **如果网页没有提供对当前搜索查询有帮助的信息：** 输出以下文本。
+    
+    **Final Information**
+    
+    No helpful information found.
+
+    **输入：**
+    - **先前的推理步骤：**  
+    {prev_reasoning}
+
+    - **当前搜索查询：**  
+    {search_query}
+
+    - **搜索到的网页：**  
+    {document}
+
+    现在你应该分析每个网页，并基于当前搜索查询"{search_query}"和先前的推理步骤，找出有帮助的信息。
+"""
 
 def get_singleqa_search_o1_instruction(MAX_SEARCH_LIMIT):
     return (
@@ -139,6 +179,27 @@ def get_singleqa_search_o1_instruction(MAX_SEARCH_LIMIT):
         "Remember:\n"
         "- Use <|begin_search_query|> to request a web search and end with <|end_search_query|>.\n"
         "- When done searching, continue your reasoning.\n\n"
+    )
+
+# 再核查一下，只是大概翻译了一下
+def get_singleqa_search_o1_instruction_ZH(MAX_SEARCH_LIMIT):
+    return (
+        "你是一个具备网络搜索能力的推理助手，可以执行网页搜索以帮助你准确回答用户的问题。你拥有以下特殊工具：\n\n"
+        "- 执行搜索：编写 <|begin_search_query|> 你的查询内容 <|end_search_query|>。\n"
+        "随后，系统将搜索并分析相关网页，然后以 <|begin_search_result|> ...搜索结果... <|end_search_result|> 的格式向你提供有用信息。\n\n"
+        f"如有必要，你可以重复搜索过程多次。搜索尝试的最大次数限制为 {MAX_SEARCH_LIMIT}。\n\n"
+        "一旦你获得了所需的全部信息，请继续你的推理过程。\n\n"
+        "示例：\n"
+        "问题：\"谁获得了第一个诺贝尔物理学奖？\"\n"
+        "助手的思考步骤：\n"
+        "- 我需要查明谁被授予了第一个诺贝尔物理学奖。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>first Nobel Prize in Physics winner<|end_search_query|>\n\n"
+        "（系统从相关网页返回处理后的信息）\n\n"
+        "助手继续结合新信息进行推理...\n\n"
+        "请记住：\n"
+        "- 使用 <|begin_search_query|> 发起网页搜索请求，并以 <|end_search_query|> 结束。\n"
+        "- 完成搜索后，继续你的推理过程。\n\n"
     )
 
 def get_multiqa_search_o1_instruction(MAX_SEARCH_LIMIT):
@@ -167,6 +228,31 @@ def get_multiqa_search_o1_instruction(MAX_SEARCH_LIMIT):
         "- When done searching, continue your reasoning.\n\n"
     )
 
+# 再核查一下，只是大概翻译了一下
+def get_multiqa_search_o1_instruction_ZH(MAX_SEARCH_LIMIT):
+    return (
+        "你是一个具备网络搜索能力的推理助手，可以执行网页搜索以帮助你准确回答用户的问题。你拥有以下特殊工具：\n\n"
+        "- 执行搜索：编写 <|begin_search_query|> 你的查询内容 <|end_search_query|>。\n"
+        "随后，系统将搜索并分析相关网页，然后以 <|begin_search_result|> ...搜索结果... <|end_search_result|> 的格式向你提供有用信息。\n\n"
+        f"如有必要，你可以重复搜索过程多次。搜索尝试的最大次数限制为 {MAX_SEARCH_LIMIT}。\n\n"
+        "一旦你获得了所需的全部信息，请继续你的推理过程。\n\n"
+        "示例：\n"
+        "问题：\"Alice David 是某款电子游戏中 Lara Croft 的配音演员，这款游戏由哪家公司开发？\"\n"
+        "助手的思考步骤：\n"
+        "- 我需要查明谁为电子游戏中的 Lara Croft 配音。\n"
+        "- 然后，我需要确定那款电子游戏是由哪家公司开发的。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>Alice David Lara Croft voice<|end_search_query|>\n\n"
+        "（系统从相关网页返回处理后的信息）\n\n"
+        "助手思考：搜索结果表明，Alice David 是某款特定电子游戏中 Lara Croft 的配音演员。现在，我需要查明那款游戏是由哪家公司开发的。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>video game developed by Alice David Lara Croft<|end_search_query|>\n\n"
+        "（系统从相关网页返回处理后的信息）\n\n"
+        "助手继续结合新信息进行推理...\n\n"
+        "请记住：\n"
+        "- 使用 <|begin_search_query|> 发起网页搜索请求，并以 <|end_search_query|> 结束。\n"
+        "- 完成搜索后，继续你的推理过程。\n\n"
+    )
     
 def get_singleqa_rag_agent_instruction(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
     return (
