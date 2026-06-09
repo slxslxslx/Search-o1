@@ -72,7 +72,7 @@ def evaluate_predictions(output, labeled_answer, mode='gen'):
     final_metric = {"is_valid_answer": False, "acc": 0, "em": 0, "f1": 0, 'math_equal': 0}
     pred_answer = extract_answer(output, mode=mode)
     print(f"evaluate.py里面的 mode:{mode}")
-    print(f"evaluate.py里面的 evaluate_predictions:{evaluate_predictions}")
+    print(f"evaluate.py里面的 output:{output}")
     print(f"evaluate.py里面的 labeled_answer:{labeled_answer}")  # gold answer
     if pred_answer != '':
         final_metric["is_valid_answer"] = True
@@ -81,22 +81,22 @@ def evaluate_predictions(output, labeled_answer, mode='gen'):
         if isinstance(labeled_answer, str):
             labeled_answer = [labeled_answer]
         normalized_pred_answer = normalize_answer_qa(pred_answer)
-        for answer in labeled_answer:
+        for answer in labeled_answer: # 遍历所有参考答案
             normalized_ground_truth = normalize_answer_qa(answer)
             em = int(normalized_pred_answer == normalized_ground_truth)
-            acc = int(normalized_ground_truth in normalized_pred_answer)
+            acc = int(normalized_ground_truth in normalized_pred_answer) # 参考答案是否是预测答案的子串（包含关系）
 
-            prediction_tokens = normalized_pred_answer.split()
-            ground_truth_tokens = normalized_ground_truth.split()
-            common = Counter(prediction_tokens) & Counter(ground_truth_tokens)
-            num_same = sum(common.values())
-            if num_same == 0:
+            prediction_tokens = normalized_pred_answer.split()   # 预测答案分词
+            ground_truth_tokens = normalized_ground_truth.split()   # 参考答案分词
+            common = Counter(prediction_tokens) & Counter(ground_truth_tokens)  # 词频交集
+            num_same = sum(common.values())  # 共同词的总出现次数
+            if num_same == 0:  # 如果预测答案和参考答案完全没有共同词，直接跳过 F1 计算（F1 保持 0）。
                 continue
-            precision = 1.0 * num_same / len(prediction_tokens)
-            recall = 1.0 * num_same / len(ground_truth_tokens)
+            precision = 1.0 * num_same / len(prediction_tokens)  # 预测中有多少是对的
+            recall = 1.0 * num_same / len(ground_truth_tokens)  # 答案中有多少被预测到了
             f1 = (2 * precision * recall) / (precision + recall)
             for k in ["em", "acc", "f1"]:
-                final_metric[k] = max(eval(k), final_metric[k])
+                final_metric[k] = max(eval(k), final_metric[k])  # 对每个参考答案计算指标后，取最大值。
 
     else:
         normalized_pred_answer = normalize_answer(pred_answer)
@@ -230,13 +230,13 @@ def run_evaluation(filtered_data, input_list, output_list, dataset_name, output_
 
     else:
         # Existing evaluation for other datasets
-        avg_em, avg_acc, avg_f1, avg_math = [], [], [], []
-        num_valid_answer = 0
+        avg_em, avg_acc, avg_f1, avg_math = [], [], [], []  # avg_math数学表达式等价判断
+        num_valid_answer = 0  # num_valid_answer排除空答案或无效选择
 
         # If the dataset is GPQA, track metrics per domain
         domain_metrics = {}
 
-        for item, input_prompt, result in zip(filtered_data, input_list, output_list):
+        for item, input_prompt, result in zip(filtered_data, input_list, output_list):  # item：原始数据样本（含标准答案）。input_prompt：送入模型的完整提示词
             if type(result) == str:
                 item['Output'] = result
             else:
@@ -265,7 +265,7 @@ def run_evaluation(filtered_data, input_list, output_list, dataset_name, output_
             # Determine the validity of the predicted answer
             my_method_valid = (pred_answer != '' and not (mode == 'choose' and dataset_name == 'gpqa' and len(pred_answer) > 1))
 
-            avg_em.append(metric['em'])
+            avg_em.append(metric['em']) # 无论答案是否有效，都收集指标；但 num_valid_answer 只统计有效答案。
             avg_acc.append(metric['acc'])
             avg_f1.append(metric['f1'])
             avg_math.append(metric['math_equal'])
@@ -295,7 +295,8 @@ def run_evaluation(filtered_data, input_list, output_list, dataset_name, output_
             'em': np.mean(avg_em) if len(avg_em) > 0 else 0.0,
             'acc': np.mean(avg_acc) if len(avg_acc) > 0 else 0.0,
             'f1': np.mean(avg_f1) if len(avg_f1) > 0 else 0.0,
-            'math_equal': np.mean(avg_math) if len(avg_em) > 0 else 0.0,
+            # 'math_equal': np.mean(avg_math) if len(avg_em) > 0 else 0.0,
+            'math_equal': np.mean(avg_math) if len(avg_math) > 0 else 0.0,
             'num_valid_answer': f'{num_valid_answer} of {len(input_list)}',
             'query_latency': f'{(total_time / len(input_list) * 1000):.0f} ms',
         }
@@ -327,6 +328,26 @@ def run_evaluation(filtered_data, input_list, output_list, dataset_name, output_
     # Save prediction results and metrics
     with open(os.path.join(output_dir, result_json_name), mode='w', encoding='utf-8') as json_file:
         json.dump(filtered_data, json_file, indent=4, ensure_ascii=False)
+    
+    # # ===== 新增：将 filtered_data 追加到 all.jsonl =====
+    # all_jsonl_path = os.path.join(output_dir, 'all.jsonl')
+    # with open(all_jsonl_path, mode='a', encoding='utf-8') as jsonl_file:
+    #     for item in filtered_data:
+    #         jsonl_file.write(json.dumps(item, ensure_ascii=False) + '\n')
+    # # ===================================================
+   
+    # ===== 新增：将 filtered_data 追加到 all.jsonl =====
+    all_jsonl_path = os.path.join(output_dir, 'all.jsonl')
+    with open(all_jsonl_path, mode='a', encoding='utf-8') as jsonl_file:
+        for item in filtered_data:
+            simplified_item = {
+                "id": item.get("id"),
+                "answer": item.get("answer"),
+                "Output": item.get("Output"),
+                "Pred_Answer": item.get("Pred_Answer"),
+            }
+            jsonl_file.write(json.dumps(simplified_item, ensure_ascii=False) + '\n')
+    # ===================================================
 
     with open(os.path.join(output_dir, metrics_json_name), mode='w', encoding='utf-8') as json_file:
         json.dump(final_metrics, json_file, indent=4, ensure_ascii=False)
