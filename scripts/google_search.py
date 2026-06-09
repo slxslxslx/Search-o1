@@ -60,9 +60,9 @@ def extract_snippet_with_context(full_text: str, snippet: str, context_chars: in
     Returns:
         Tuple[bool, str]: The first element indicates whether extraction was successful, the second element is the extracted context.
     """
-    print(f"google_search.py里面的 extract_snippet_with_context() 传入的len(full_text)：{len(full_text)}")
-    print(f"google_search.py里面的 extract_snippet_with_context() 传入的snippet：{snippet}")
-    print(f"google_search.py里面的 extract_snippet_with_context() 传入的context_chars：{context_chars}")
+    print(f"google_search.py里面的 extract_snippet_with_context() 传入的len(full_text)={len(full_text)}")
+    print(f"google_search.py里面的 extract_snippet_with_context() 传入的snippet={snippet}")
+    print(f"google_search.py里面的 extract_snippet_with_context() 传入的context_chars={context_chars}")
     try:
         full_text = full_text[:50000]
 
@@ -98,11 +98,11 @@ def extract_snippet_with_context(full_text: str, snippet: str, context_chars: in
             end_index = min(len(full_text), para_end + context_chars)
             # 截取上下文
             context = full_text[start_index:end_index]
-            print(f"google_search.py里面的 extract_snippet_with_context() 找到匹配snippet的句子！！！best_sentence：{best_sentence}\n返回的content：{context}")
+            print(f"google_search.py里面的 extract_snippet_with_context() 找到匹配snippet的句子！！！成功返回best_sentence：{best_sentence}\n返回的content：{context}")
             return True, context
         else:
             # If no matching sentence is found, return the first context_chars*2 characters of the full text
-            print(f"google_search.py里面的 extract_snippet_with_context() 找不到匹配snippet的句子")
+            print(f"google_search.py里面的 extract_snippet_with_context() 找不到匹配snippet的句子，失败了！！！！！！！")
             return False, full_text[:context_chars * 2]
     except Exception as e:
         return False, f"Failed to extract snippet context due to {str(e)}"
@@ -124,6 +124,7 @@ def extract_text_from_url(url, use_jina=False, jina_api_key=None, snippet: Optio
         str: Extracted text or context.
     """
     try:
+        print(f'google_search.py里面的 extract_text_from_url()开始爬取url={url},use_jina={use_jina},jina_api_key={jina_api_key},snippet={snippet}')
         if use_jina:
             jina_headers = {
                 'Authorization': f'Bearer {jina_api_key}',
@@ -181,11 +182,11 @@ def extract_text_from_url(url, use_jina=False, jina_api_key=None, snippet: Optio
                 soup = BeautifulSoup(response.text, 'html.parser')
             text = soup.get_text(separator=' ', strip=True)
 
-        print(f"google_search.py里面的 extract_text_from_url()里面的 url:{url}fetch结果：{len(text)}")
+        print(f"google_search.py里面的 extract_text_from_url()里面 爬虫到 url:{url}  fetch结果：{len(text)}")
         if snippet:
             success, context = extract_snippet_with_context(text, snippet)
             if success:
-                print(f"google_search.py里面的 extract_text_from_url()里面的 fetch全文，抽取后的结果：{context}")
+                print(f"google_search.py里面的 extract_text_from_url()里面的 fetch全文，【extract_snippet_with_context抽取】后的结果：{context}")
                 return context
             else:
                 return text
@@ -336,6 +337,7 @@ def google_web_search(query, subscription_key, endpoint, market="en-US",  langua
             headers=headers,
             params=params,
             timeout=timeout,
+            proxies=proxies,
         )
         response.raise_for_status()
         serper_data = response.json()
@@ -370,7 +372,7 @@ def google_web_search(query, subscription_key, endpoint, market="en-US",  langua
             bing_style_response["webPages"]["value"].append(
                 {
                     "id": 1,  # 后面会重新编号
-                    "name": "",  # Bing 里 name 对应标题，这里留空表示答案框
+                    "name": answer_box.get("title", ""),  # Bing 里 name 对应标题，这里留空表示答案框
                     "url": answer_box.get("link", ""),
                     "siteName": "Answer Box",
                     "datePublished": answer_box.get("date", ""),
