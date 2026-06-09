@@ -256,12 +256,12 @@ def main():
             json.dump(url_cache, f, ensure_ascii=False, indent=2)
 
     # ---------------------- Model Loading ----------------------
-    print("[DEBUG] Loading tokenizer...")
+    print("[DEBUG] 加载 tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = 'left'
-    print("[DEBUG] Tokenizer loaded")
+    print("[DEBUG] Tokenizer 加载完毕")
 
     # Define output directory based on model and dataset
     if 'qwq' in model_path.lower():
@@ -278,20 +278,20 @@ def main():
     print(f"[DEBUG] Output directory: {output_dir}")
 
     # Initialize the LLM
-    print("[DEBUG] Initializing vLLM LLM... (this may take a while)")
+    print("[DEBUG] 初始化 vLLM LLM.......")
     llm = LLM(
         model=model_path,
         # tensor_parallel_size=torch.cuda.device_count(),
         tensor_parallel_size=2,  
         gpu_memory_utilization=0.7,
     )
-    print("[DEBUG] vLLM LLM initialized successfully")
+    print("[DEBUG] vLLM LLM 部署完毕")
 
     # ---------------------- Data Loading ----------------------
-    print(f"[DEBUG] Loading data from {data_path}")
+    print(f"[DEBUG] 从 {data_path} 加载数据集")
     with open(data_path, 'r', encoding='utf-8') as json_file:
         filtered_data = json.load(json_file)
-    print(f"[DEBUG] Loaded {len(filtered_data)} items from dataset")
+    print(f"[DEBUG] 从数据集加载 {len(filtered_data)} 条数据")
 
     # ---------------------- Batch Generation Function ----------------------
     # 批量生成推理链（reasoning chain）的函数，主要用于将网页内容转换为结构化的推理过程。
@@ -307,10 +307,16 @@ def main():
     ) -> List[str]:
         """
         输入：原始问题列表、之前的推理步骤、搜索查询、文档列表。
-        调用 LLM 为每个文档生成信息提取或推理更新。返回提取的信息列表。
+        调用 LLM 为每个文档生成信息提取或推理更新。返回提取的信息列表。模型从网页中提取的精简有用信息，格式为 **Final Information**
         """
-        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 original_questions {original_questions} ")
-        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 prev_reasonings {prev_reasonings} ")
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 original_questions = {json.dumps(original_questions, indent=4, ensure_ascii=False)} ")
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 prev_reasonings ={json.dumps(prev_reasonings, indent=4, ensure_ascii=False)} ")
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 search_queries ={json.dumps(search_queries, indent=4, ensure_ascii=False)} ")
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 documents= {json.dumps(documents, indent=4, ensure_ascii=False)} ")
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 dataset_name ={json.dumps(dataset_name, indent=4, ensure_ascii=False)} ")
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 batch_output_records= {json.dumps(batch_output_records, indent=4, ensure_ascii=False)} ")
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 max_tokens= {max_tokens} ")
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch()里面的 coherent ={json.dumps(coherent, indent=4, ensure_ascii=False)} ")
         user_prompts = [ # 将每个（前序推理、搜索查询、文档）组合转换为指令格式。
             get_webpage_to_reasonchain_instruction(r, sq, doc)
             for r, sq, doc in zip(prev_reasonings, search_queries, documents)
@@ -325,7 +331,7 @@ def main():
             chat_template_kwargs={"enable_thinking": True}
         ) for p in prompts]
 
-        output = llm.generate(
+        output = llm.generate(  # 调用vLLM批量生成
             prompts,
             sampling_params=SamplingParams(
                 max_tokens=max_tokens,
@@ -338,19 +344,20 @@ def main():
         print("[DEBUG] llm.generate for webpage analysis completed")
 
         raw_outputs = [out.outputs[0].text for out in output]  # 原始生成文本
-        extracted_infos = [extract_answer(raw, mode='infogen') for raw in raw_outputs]  # 提取结构化信息
+        extracted_infos = [extract_answer(raw, mode='infogen') for raw in raw_outputs]   # 从原始输出中提取结构化信息，mode='infogen'表示提取"**Final Information**"标记后的内容
 
         for i, (p, r, e) in enumerate(zip(prompts, raw_outputs, extracted_infos)):
             batch_output_records.append({
                 'prompt': p,
                 'raw_output': r,
-                'extracted_info': e
+                'extracted_info': e  # 提取后的精简信息（仅Final Information部分）
             })
 
+        print(f"[DEBUG] generate_webpage_to_reasonchain_batch() 最终处理后的 extracted_infos= {json.dumps(extracted_infos, indent=4, ensure_ascii=False)} ")
         return extracted_infos
 
     # ---------------------- Preparation of Input Prompts ----------------------
-    print("[DEBUG] Building input prompts for all items...")
+    print("[DEBUG] 为所有items构建prompts...")
     input_list = []
     for item in filtered_data:
         question = item['Question']
@@ -358,7 +365,7 @@ def main():
         if dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki']:
             if dataset_name in ['nq', 'triviaqa']:
                 instruction = get_singleqa_search_o1_instruction(MAX_SEARCH_LIMIT)
-            elif dataset_name in ['hotpotqa', 'musique', 'bamboogle', '2wiki']:
+            elif dataset_name in ['hotpotqa', 'musique', 'bamboogle', '2wiki']:  # 走这个
                 instruction = get_multiqa_search_o1_instruction(MAX_SEARCH_LIMIT)
             if 'qwq' in model_path.lower():
                 user_prompt = get_task_instruction_openqa(question, model_name='qwq')
@@ -400,7 +407,7 @@ def main():
         )
         input_list.append(prompt)
 
-    if subset_num != -1:
+    if subset_num != -1:  # 截取数据集的前 subset_num 个样本，用于快速测试或调试。
         input_list = input_list[:subset_num]
         filtered_data = filtered_data[:subset_num]
     print(f"[DEBUG] Total prompts prepared: {len(input_list)}")
@@ -423,6 +430,8 @@ def main():
             max_tokens = 32768
         else:
             max_tokens = 20480
+    elif 'qwen3.5' in model_path.lower() or 'qwen3_5' in model_path.lower():
+        max_tokens = 20480
     else:
         max_tokens = 8192
     print(f"[DEBUG] Max generation tokens set to {max_tokens}")
@@ -431,7 +440,7 @@ def main():
     # 对一批序列调用 vLLM 生成，停止条件包含 END_SEARCH_QUERY。
     def run_generation(sequences: List[Dict], max_tokens: int) -> List:
         prompts = [s['prompt'] for s in sequences]
-        print(f"[DEBUG] run_generation: {len(prompts)} prompts, max_tokens={max_tokens}")
+        print(f"[DEBUG] run_generation()里面的:  len(prompts): {len(prompts)}, max_tokens={max_tokens}")
         sampling_params = SamplingParams(
             max_tokens=max_tokens,
             temperature=temperature,
@@ -442,32 +451,35 @@ def main():
             include_stop_str_in_output=True,
         )
         output_list = llm.generate(prompts, sampling_params=sampling_params)
-        print("[DEBUG] run_generation: llm.generate completed")
+        print("[DEBUG] run_generation()里面的: llm.generate completed")
         return output_list
 
     # 正则提取两个标记之间的内容，用于获取模型输出的搜索查询。
     def extract_between(text: str, start_tag: str, end_tag: str) -> Optional[str]:
+        print(f"run_search_o1.py里面的 extract_between() 入参text：{json.dumps(text, indent=4, ensure_ascii=False)}")
         pattern = re.escape(start_tag) + r"(.*?)" + re.escape(end_tag)
         matches = re.findall(pattern, text, flags=re.DOTALL)
         if matches:
+            print(f"run_search_o1.py里面的 extract_between() 处理后返回：{json.dumps(matches[-1].strip(), indent=4, ensure_ascii=False)}")
             return matches[-1].strip()
         return None
 
     def replace_recent_steps(origin_str, replace_str):
         """
-        解析模型输出的推理步骤 (格式 Step 1: ...)，根据新生成的分析结果替换或删除特定步骤。处理 DELETE THIS STEP 标记。
-        Replaces specific steps in the original reasoning steps with new steps.
-        If a replacement step contains "DELETE THIS STEP", that step is removed.
+        解析模型输出的推理步骤 (格式 Step 1: ...)，根据新生成的分析结果【替换或删除】特定步骤，用于让模型在搜索后更新自己的推理链。处理 DELETE THIS STEP 标记。
+          -  替换特定步骤的内容
+          -  删除标记为 DELETE THIS STEP 的步骤
+          -  保持步骤顺序
 
         Parameters:
-        - origin_str (str): The original reasoning steps.
-        - replace_str (str): The steps to replace or delete.
+        - origin_str (str): 原始推理步骤.
+        - replace_str (str): 新的分析结果.
 
         Returns:
-        - str: The updated reasoning steps after applying replacements.
+        - str: 更新后的推理步骤.
         """
 
-        def parse_steps(text):
+        def parse_steps(text):  # 步骤解析器
             """
             Parses the reasoning steps from a given text.
 
@@ -476,8 +488,13 @@ def main():
 
             Returns:
             - dict: A dictionary mapping step numbers to their content.
+                {
+                1: "分析...\n补充内容1\n补充内容2",
+                2: "搜索...\n结果分析",
+                3: "结论"
+            }
             """
-            step_pattern = re.compile(r"Step\s+(\d+):\s*")
+            step_pattern = re.compile(r"Step\s+(\d+):\s*")  # 匹配格式：Step 1: 、Step 12:  等，捕获步骤编号。
             steps = {}
             current_step_num = None
             current_content = []
@@ -504,15 +521,19 @@ def main():
         # Parse the original and replacement steps
         origin_steps = parse_steps(origin_str)
         replace_steps = parse_steps(replace_str)
+        print(f"run_search_o1.py里面的 replace_recent_steps()里面的  parse_steps()里面的 origin_str：{json.dumps(origin_str, indent=4, ensure_ascii=False)}")
+        print(f"run_search_o1.py里面的 replace_recent_steps()里面的  parse_steps()里面的 replace_str：{json.dumps(replace_str, indent=4, ensure_ascii=False)}")
+        print(f"run_search_o1.py里面的 replace_recent_steps()里面的  parse_steps()里面的 origin_steps：{json.dumps(origin_steps, indent=4, ensure_ascii=False)}")
+        print(f"run_search_o1.py里面的 replace_recent_steps()里面的  parse_steps()里面的 replace_steps：{json.dumps(replace_steps, indent=4, ensure_ascii=False)}")
 
         # Apply replacements
         for step_num, content in replace_steps.items():
             if "DELETE THIS STEP" in content:
-                # Remove the step if it exists
+                # 删除该步骤（如果存在）
                 if step_num in origin_steps:
                     del origin_steps[step_num]
             else:
-                # Replace or add the step
+                # 覆盖或新增该步骤
                 origin_steps[step_num] = content
 
         # Sort the steps by step number
@@ -521,6 +542,7 @@ def main():
         # Reconstruct the reasoning steps as a single string
         new_reasoning_steps = "\n\n".join([f"{content}" for num, content in sorted_steps])
 
+        print(f"run_search_o1.py里面的 replace_recent_steps()里面的  处理后的 steps：{json.dumps(steps, indent=4, ensure_ascii=False)}")
         return new_reasoning_steps
 
     # ---------------------- Initialize Collection Structure ----------------------
@@ -530,20 +552,21 @@ def main():
     start_time = time.time()
     turn = 0
 
-    print("[DEBUG] Starting main interaction loop...")
+    print("[DEBUG] 启动主交互 循环...")
+    print(f"run_search_o1.py里面的 active_sequences ：{active_sequences}")
 
     # Main loop until all sequences are finished or maximum turns reached
     while True:  # 主循环 (直到所有序列完成或达到最大轮次 MAX_TURN)
         # Identify sequences that need generation
         sequences_needing_generation = [seq for seq in active_sequences if not seq['finished']]
-        print(f"[DEBUG] Main loop: {len(sequences_needing_generation)} active sequences, turn={turn}")
+        print(f"[DEBUG] Main loop: turn={turn}, sequences_needing_generation={sequences_needing_generation}")
 
         if sequences_needing_generation:
             turn += 1
             print(f'\n-------------- Turn {turn} --------------')
-            print(f"We have {len(sequences_needing_generation)} sequences needing generation...")
+            print(f"有 len(sequences_needing_generation)={len(sequences_needing_generation)} 的sequences需要生成...")
             outputs = run_generation(sequences_needing_generation, max_tokens) # 对未完成的序列，调用 LLM 生成，使用停止标记 END_SEARCH_QUERY (即 "<|end_search_query|>") 和 EOS。返回生成的文本。
-            print("Generation completed, processing outputs...")
+            print(f"生成完成，处理输出outputs={outputs}…")
 
             # Initialize batch variables
             batch_relevant_info = []  # Google 搜索结果的前 top_k 条，包含 URL、标题、摘要
@@ -556,11 +579,12 @@ def main():
             # Collect URLs to fetch across all sequences
             all_urls_to_fetch = set()  # 所有需要抓取的 URL 集合，决定 fetch_page_content 要抓取哪些网页，结果存入 url_cache
             url_snippets = {}
-            url_sequence_map = {}  # Map URL to list of sequences needing it
+            url_sequence_map = {}  # 将URL映射到需要它的序列列表
 
             # Process each sequence and collect URLs
             # 将生成文本追加到 seq['prompt'], seq['output'], seq['history']
             for seq, out in zip(sequences_needing_generation, outputs):
+                print(f"run_search_o1.py里面的 main主循环 里面的for seq, out in zip(sequences_needing_generation, outputs): \nseq={seq}\nout={out}")
                 text = out.outputs[0].text
                 seq['history'].append(text)
                 # Append generated text to prompt and output
@@ -574,23 +598,25 @@ def main():
                 if search_query and seq['output'].rstrip().endswith(END_SEARCH_QUERY):  # 情况 A：存在搜索查询且输出以 END_SEARCH_QUERY 结尾
                     print(f"run_search_o1.py里面的 main() 检测到了以 END_SEARCH_QUERY 结尾 seq['output'].rstrip(): {seq['output'].rstrip()}，\n检测到了的search_query 是: '{search_query}")
                     if seq['search_count'] < MAX_SEARCH_LIMIT and search_query not in seq['executed_search_queries']: # 检查是否达到最大搜索次数或重复查询,若可搜索:
+                        print(f"进入  if seq['search_count'] < MAX_SEARCH_LIMIT and search_query not in seq['executed_search_queries']")
                         print(f"执行search Query 查询，search_query是: {search_query}")
                         # Execute search, use cache if available
                         if search_query in search_cache and search_cache[search_query]:  # 调用 bing_web_search (带缓存)
                             results = search_cache[search_query]  
-                            print(f"Using cached search results for query: \"{search_query}\"")
+                            print(f"使用缓存的搜索结果进行查询: \"{search_query}\"")
                         else:
                             try:
+                                print(f"没有缓存，使用google搜索: \"{search_query}\"")
                                 results = google_web_search(search_query, google_subscription_key, google_endpoint, market='en-US', language='en')
                                 search_cache[search_query] = results
-                                print(f"Executed and cached search for query: \"{search_query}\"")
                             except Exception as e:
-                                print(f"Error during search query '{search_query}': {e}")
+                                print(f"搜索查询时出错 '{search_query}': {e}")
                                 # search_cache[search_query] = {}  # 异常时不写入缓存
                                 results = {}
 
                         # Extract relevant information from Bing search results
                         relevant_info = extract_relevant_info(results)[:top_k]  # 调用 extract_relevant_info 提取前 top_k 个结果
+                        print(f"run_search_o1.py里面的 extract_relevant_info()处理后，截取top_k个，得到的relevant_info：{json.dumps(relevant_info, indent=4, ensure_ascii=False)}")
                         seq['relevant_info'] = relevant_info
 
                         # Extract URLs and snippets
@@ -615,17 +641,19 @@ def main():
                             truncated_prev_reasoning += f"Step {i + 1}: {step}\n\n"
 
                         prev_steps = truncated_prev_reasoning.split('\n\n')
-                        if len(prev_steps) <= 5:
+                        if len(prev_steps) <= 5:  # 不截断
                             truncated_prev_reasoning = '\n\n'.join(prev_steps)
-                        else:
+                        else:  #步骤大于5， 进入智能截断模式
                             truncated_prev_reasoning = ''
                             for i, step in enumerate(prev_steps):
+                                # 保留条件：第一步（初始分析，上下文基础） 或 最后4步（最近的推理，与当前决策最相关） 或 包含搜索标签的步骤（BEGIN_SEARCH_QUERY 记录了"问过什么"，避免重复搜索；BEGIN_SEARCH_RESULT 记录了"获得了什么信息"，核心证据）
                                 if i == 0 or i >= len(prev_steps) - 4 or BEGIN_SEARCH_QUERY in step or BEGIN_SEARCH_RESULT in step:
                                     truncated_prev_reasoning += step + '\n\n'
                                 else:
+                                    # # 省略中间步骤，但只添加一次 "..."，避免重复
                                     if truncated_prev_reasoning[-len('\n\n...\n\n'):] != '\n\n...\n\n':
                                         truncated_prev_reasoning += '...\n\n'
-                        truncated_prev_reasoning = truncated_prev_reasoning.strip('\n')
+                        truncated_prev_reasoning = truncated_prev_reasoning.strip('\n')  # 去掉末尾多余的换行符。
 
                         # Collect parameters for batch processing
                         batch_relevant_info.append(relevant_info)
@@ -647,6 +675,7 @@ def main():
                         print(f"Search limit reached for query: \"{search_query}\"")
 
                     elif search_query in seq['executed_search_queries']:
+                        print(f"您已经搜索了这个查询。请参考以往的结果。")
                         limit_message = f"\n{BEGIN_SEARCH_RESULT}\nYou have searched this query. Please refer to previous results.\n{END_SEARCH_RESULT}\n"
                         seq['prompt'] += limit_message
                         seq['output'] += limit_message
@@ -661,46 +690,59 @@ def main():
 
             # 批量抓取网页内容  。Batch fetch all URLs at once to optimize speed 
             if all_urls_to_fetch:
-                print(f"[DEBUG] Fetching {len(all_urls_to_fetch)} URLs...")
+                print(f"[DEBUG] 开始爬取 {len(all_urls_to_fetch)}个 URLs...")
                 try:
                     fetched_contents = fetch_page_content(  # 并发获取每个 URL 的文本 (使用 Jina 或 BeautifulSoup)
                         list(all_urls_to_fetch),
                         use_jina=use_jina,
-                        jina_api_key=jina_api_key,
-                        # snippets=url_snippets  # Do not pass snippets when updating url_cache directly
+                        jina_api_key=jina_api_key, # 这里没有使用extract_snippet_with_context，因为没传snippet参数
+                        # snippets=url_snippets  # Do not pass snippets when updating url_cache directly。如果打开注释——破坏缓存通用性：url_cache[url] 存储的是针对当前特定 snippet 提取出的几千字上下文。下次别的查询搜到同一个 URL，从缓存读出来的就是错的/无关的文本。还有就是会重复执行extract_snippet_with_context 
                     )
                     print(f"Fetched {len(fetched_contents)} URLs successfully.")
                 except Exception as e:
-                    print(f"Error during batch URL fetching: {e}")
+                    print(f"Error 爬取全文出错: {e}")
                     fetched_contents = {url: f"Error fetching URL: {e}" for url in all_urls_to_fetch}
                 # Update cache with fetched contents
                 for url, content in fetched_contents.items():  # 更新 url_cache
                     url_cache[url] = content
 
-            # After fetching, prepare formatted documents for batch processing
-            for relevant_info in batch_relevant_info:
+            # After fetching, prepare formatted documents for batch processing。将搜索结果格式化为模型可读的文档，用于批量送入 LLM 进行推理
+            # batch_relevant_info（多组搜索结果）
+                # │
+                # ├── 第1组搜索结果（多个网页）
+                # │       ├── 网页1 → 提取上下文 → 格式化
+                # │       ├── 网页2 → 提取上下文 → 格式化
+                # │       └── ... → 拼接为 formatted_documents
+                # │
+                # ├── 第2组搜索结果（多个网页）
+                # │       └── ... → 拼接为 formatted_documents
+                # │
+                # └── batch_documents（最终列表，每个元素是一组格式化文档）
+            for relevant_info in batch_relevant_info:  # batch_relevant_info批量查询的搜索结果，每个元素是一组网页列表。relevant_info[0] 是第1个查询的10个网页，relevant_info[1] 是第2个查询的10个网页
                 formatted_documents = ""
                 for i, doc_info in enumerate(relevant_info):
                     url = doc_info['url']
-                    raw_context = url_cache.get(url, "")  #????
-                    doc_info['snippet'] = doc_info['snippet'].replace('<b>','').replace('</b>','')            
+                    raw_context = url_cache.get(url, "")
+                    doc_info['snippet'] = doc_info['snippet'].replace('<b>','').replace('</b>','') # 搜索结果的 snippet 常包含高亮标签 <b>...</b>。去掉后得到纯文本摘要
                     success, filtered_context = extract_snippet_with_context(raw_context, doc_info['snippet'], context_chars=max_doc_len) # 根据 snippet 提取相关上下文 (限制长度 max_doc_len)
+                    print(f"run_search_o1.py里面的 relevant_info循环 里面的 extract_snippet_with_context结果：success={success}，filtered_context={json.dumps(filtered_context, indent=4, ensure_ascii=False)}")
                     if success:
                         context = filtered_context
                     else:
-                        context = raw_context[:max_doc_len*2]
+                        context = raw_context[:max_doc_len*2] # # 退化为前 max_doc_len*2 个字符
 
-                    doc_info['context'] = context
+                    doc_info['context'] = context  # 给原始字典新增/覆盖 context 字段，供后续使用
                     formatted_documents += f"**Web Page {i + 1}:**\n"
                     formatted_documents += json.dumps(doc_info, ensure_ascii=False, indent=2) + "\n"
                     
-                batch_documents.append(formatted_documents)
+                batch_documents.append(formatted_documents) # 最终 batch_documents 的长度 = 查询批次大小，每个元素是一组格式化的网页文档字符串。
+            print(f"run_search_o1.py里面的 relevant_info循环 处理后的 batch_documents 结果：batch_documents={json.dumps(batch_documents, indent=4, ensure_ascii=False)}")
 
             # After fetching, prepare for batch processing if there are any
             if batch_sequences:
-                print(f"Batch processing {len(batch_sequences)} sequences with generate_webpage_to_reasonchain_batch...")
+                print(f"用generate_webpage_to_reasonchain_batch 处理 len(batch_sequences)={len(batch_sequences)}个 sequences ...")
                 webpage_analyses = generate_webpage_to_reasonchain_batch(  # 将所有序列的 (原始问题、之前的推理步骤、搜索查询、格式化文档) 打包，调用 generate_webpage_to_reasonchain_batch 得到分析结果。
-                    original_questions=batch_original_questions,
+                    original_questions=batch_original_questions, # webpage_analyses 是与输入等长的列表，每个元素是 LLM 对对应网页内容的分析文本。
                     prev_reasonings=batch_prev_reasonings,
                     search_queries=batch_search_queries,
                     documents=batch_documents,
@@ -737,7 +779,7 @@ def main():
             print(f"[DEBUG] {len(unfinished)} sequences still active, continuing to next turn...")
 
     total_time = time.time() - start_time
-    print(f"[DEBUG] Total execution time: {total_time:.2f} seconds")
+    print(f"[DEBUG] 总的执行时间: {total_time:.2f} seconds")
 
     # ---------------------- Save Batch Output Records to JSON File ----------------------
     # 结束后的处理
@@ -757,18 +799,18 @@ def main():
     output_list = [seq['output'] for seq in active_sequences]
 
     # Run evaluation。  调用 run_evaluation 评估最终输出 (从 seq['output'] 提取答案，计算准确率等)。
-    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：filtered_data：{filtered_data}")
-    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：input_list：{input_list}")
-    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：output_list：{output_list}")
-    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：dataset_name：{dataset_name}")
-    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：output_dir：{output_dir}")
-    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：total_time：{total_time}")
-    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：split：{split}")
+    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：filtered_data：{json.dumps(filtered_data, indent=4, ensure_ascii=False)}")
+    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：input_list：{json.dumps(input_list, indent=4, ensure_ascii=False)}")
+    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：output_list：{json.dumps(output_list, indent=4, ensure_ascii=False)}")
+    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：dataset_name：{json.dumps(dataset_name, indent=4, ensure_ascii=False)}")
+    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：output_dir：{json.dumps(output_dir, indent=4, ensure_ascii=False)}")
+    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：total_time：{json.dumps(total_time, indent=4, ensure_ascii=False)}")
+    print(f"run_search_o1.py里面的 调用 run_evaluation 评估最终输出 的参数：split：{json.dumps(split, indent=4, ensure_ascii=False)}")
 
     run_evaluation(filtered_data, input_list, output_list, dataset_name, output_dir, total_time, split)
 
     # ---------------------- Update Search and URL Cache。 将本次运行产生的搜索缓存和 URL 缓存更新保存到本地文件----------------------
-    print('Updating Search and URL Cache...')
+    print('更新搜索和 URL缓存…')
     # Load existing caches or initialize empty dictionaries
     # 加载已有的搜索缓存
     if os.path.exists(search_cache_path):
@@ -790,7 +832,7 @@ def main():
 
     save_caches()  # 将合并后的缓存写回磁盘
 
-    print("Process completed.")
+    print("完成！！！！")
 
 if __name__ == "__main__":
     import multiprocessing
