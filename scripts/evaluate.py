@@ -343,8 +343,8 @@ def run_evaluation(filtered_data, input_list, output_list, dataset_name, output_
             simplified_item = {
                 "id": item.get("id"),
                 "answer": item.get("answer"),
-                "Output": item.get("Output"),
                 "Pred_Answer": item.get("Pred_Answer"),
+                "Output": item.get("Output"),
             }
             jsonl_file.write(json.dumps(simplified_item, ensure_ascii=False) + '\n')
     # ===================================================
