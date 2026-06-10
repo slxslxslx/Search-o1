@@ -50,7 +50,7 @@ def parse_args():
         '--dataset_name',
         type=str,
         required=True,
-        choices=['gpqa', 'math500', 'aime', 'amc', 'livecode', 'nq', 'triviaqa', 'hotpotqa', '2wiki', 'musique', 'bamboogle'],
+        choices=['gpqa', 'math500', 'aime', 'amc', 'livecode', 'nq', 'triviaqa', 'hotpotqa', '2wiki', 'musique', 'bamboogle', 'seal0', 'XbenchDS'],
         help="Name of the dataset to use."
     )
 
@@ -199,9 +199,9 @@ def main():
     jina_api_key = args.jina_api_key
     
     # Adjust parameters based on dataset
-    if dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki', 'medmcqa', 'pubhealth']:
+    if dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki', 'medmcqa', 'pubhealth', 'seal0', 'XbenchDS']:
         MAX_SEARCH_LIMIT = 5
-        if dataset_name in ['hotpotqa', 'musique', 'bamboogle', '2wiki']:
+        if dataset_name in ['hotpotqa', 'musique', 'bamboogle', '2wiki', 'seal0', 'XbenchDS']:
             MAX_SEARCH_LIMIT = 10
             MAX_TURN = 15
         top_k = 10
@@ -362,10 +362,10 @@ def main():
     for item in filtered_data:
         question = item['Question']
 
-        if dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki']:
+        if dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki', 'seal0', 'XbenchDS']:
             if dataset_name in ['nq', 'triviaqa']:
                 instruction = get_singleqa_search_o1_instruction(MAX_SEARCH_LIMIT)
-            elif dataset_name in ['hotpotqa', 'musique', 'bamboogle', '2wiki']:  # 走这个
+            elif dataset_name in ['hotpotqa', 'musique', 'bamboogle', '2wiki', 'seal0', 'XbenchDS']:  # 走这个
                 instruction = get_multiqa_search_o1_instruction(MAX_SEARCH_LIMIT)
             if 'qwq' in model_path.lower():
                 user_prompt = get_task_instruction_openqa(question, model_name='qwq')

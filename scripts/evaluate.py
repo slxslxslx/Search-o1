@@ -424,6 +424,16 @@ if __name__ == "__main__":
         normal_output_path = './outputs/runs.qa/bamboogle.qwq.direct/test.12.28,9:51.json'
         if 'qwq' not in output_path:
             normal_output_path = ''
+    elif 'seal0' in output_path:
+        dataset_name = 'seal0'
+        normal_output_path = './outputs/runs.qa/seal0.qwq.direct/test.12.28,9:51.json'
+        if 'qwq' not in output_path:
+            normal_output_path = ''
+    elif 'XbenchDS' in output_path:
+        dataset_name = 'XbenchDS'
+        normal_output_path = './outputs/runs.qa/XbenchDS.qwq.direct/test.12.28,9:51.json'
+        if 'qwq' not in output_path:
+            normal_output_path = ''
     elif '2wiki' in output_path:
         dataset_name = '2wiki'
         normal_output_path = './outputs/runs.qa/2wiki.qwq.direct/test.12.15,15:32.json'
