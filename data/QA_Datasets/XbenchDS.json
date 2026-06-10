@@ -1,7 +1,7 @@
 [
     {
         "id": 101,
-        "prompt": "根据世界卫生组织《世界卫生统计》（World Health Statistics）报告，2020、2012两年全球人均预期寿命（总人口）的整数部分分别是多少？8年内增加或减少了多少（保留一位小数）？",
+        "Question": "根据世界卫生组织《世界卫生统计》（World Health Statistics）报告，2020、2012两年全球人均预期寿命（总人口）的整数部分分别是多少？8年内增加或减少了多少（保留一位小数）？",
         "answer": "1.1",
         "reference_steps": [
             "1. 访问世界卫生组织网页https://www.who.int/zh/data/gho/publications/world-health-statistics",
