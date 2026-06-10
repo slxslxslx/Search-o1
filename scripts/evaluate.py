@@ -248,7 +248,7 @@ def run_evaluation(filtered_data, input_list, output_list, dataset_name, output_
             elif dataset_name in ['math500', 'aime', 'amc']:
                 labeled_answer = item["answer"]
                 mode = 'gen'
-            elif dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki']:
+            elif dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki','seal0', 'XbenchDS']:
                 labeled_answer = item["answer"]
                 mode = 'qa'
             elif dataset_name in ['pubhealth']:
@@ -495,7 +495,7 @@ if __name__ == "__main__":
                 labeled_answer = item["answer"]
                 mode = 'gen'
                 domain = 'Unknown'
-            elif dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki']:
+            elif dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki', 'seal0', 'XbenchDS']:
                 labeled_answer = item["answer"]
                 mode = 'qa'
                 domain = 'Unknown'
@@ -529,7 +529,7 @@ if __name__ == "__main__":
                 elif dataset_name in ['aime', 'amc']:
                     normal_labeled_answer = normal_item["answer"]
                     normal_mode = 'gen'
-                elif dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki']:
+                elif dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki', 'seal0', 'XbenchDS']:
                     normal_labeled_answer = normal_item["answer"]
                     normal_mode = 'qa'
                 elif dataset_name in ['pubhealth']:
