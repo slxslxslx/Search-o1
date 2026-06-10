@@ -13,6 +13,8 @@ import re
 import string
 from typing import Optional, Tuple
 from nltk.tokenize import sent_tokenize
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 
 # ----------------------- Custom Headers -----------------------
@@ -329,10 +331,22 @@ def google_web_search(query, subscription_key, endpoint, market="en-US",  langua
         "X-API-KEY": subscription_key or "",
         "Content-Type": "application/json",
     }
+    
+    # 3. 配置带重试的 Session（3 次重试 + 指数退避）
+    retry_strategy = Retry(
+        total=3,                       # 最多重试 3 次
+        backoff_factor=0.5,            # 指数退避：0.5, 1, 2 秒
+        # status_forcelist=[429, 500, 502, 503, 504],  # 这些状态码也重试
+        status_forcelist=list(range(400, 600)),   # 443 Max retries exceeded with url:
+    )
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session = requests.Session()
+    session.mount("https://" , adapter)
+    session.mount("http://" , adapter)
 
     # 3. 发起请求
     try:
-        response = requests.get(
+        response = session.get(
             endpoint,
             headers=headers,
             params=params,
