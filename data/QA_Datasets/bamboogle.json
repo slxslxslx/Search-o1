@@ -1,27 +1,12 @@
 [
-    {
-        "id": 51,
-        "Question": "Who was mayor of New York City when Fiorello H. La Guardia was born?",
-        "answer": "William Russell Grace"
+  {
+        "id": 58,
+        "Question": "In what year was the tallest self-supporting tower completed?",
+        "answer": "2012"
     },
     {
-        "id": 52,
-        "Question": "Who was president of the U.S. when superconductivity was discovered?",
-        "answer": "William Howard Taft"
-    },
-    {
-        "id": 53,
-        "Question": "When was the person Russ Hanneman is based on born?",
-        "answer": "July 31, 1958"
-    },
-    {
-        "id": 54,
-        "Question": "When was the first location of the world's largest coffeehouse chain opened?",
-        "answer": "March 30, 1971"
-    },
-    {
-        "id": 55,
-        "Question": "Who directed the highest grossing film?",
-        "answer": "James Cameroon"
+        "id": 59,
+        "Question": "In what year was the tallest fixed steel structure completed?",
+        "answer": "1988"
     }
 ]
