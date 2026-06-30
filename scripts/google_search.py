@@ -234,10 +234,11 @@ def fetch_page_content(urls, max_workers=32, use_jina=False, jina_api_key=None, 
                 # results[url] = data
                 # ========== 新增：检查是否抓取失败 ==========
                 if data and not data.startswith("Error"):
+                    print(f"jina爬取成功！！！！！！！！！！！")
                     results[url] = data
                 else:
                     failed_urls.append(url)
-                    print(f"[Warning] Failed to fetch {url}: {data}")
+                    print(f"[Warning] jina 爬取失败 Failed to fetch {url}: {data}")
                 # ============================================
             except Exception as exc:
                 results[url] = f"Error fetching {url}: {exc}"

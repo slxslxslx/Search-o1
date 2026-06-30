@@ -77,8 +77,22 @@ def judge(question, answer, prediction, model_name="gpt-4o-free"):
 
     # print(os.getenv("OPENAI_API_KEY"))
 
-    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url="https://aihubmix.com/v1")  # my
+    # client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url="https://aihubmix.com/v1")  # my
 
+
+    import httpx  # 新增：导入 httpx
+    # ================= 新增：配置 SOCKS5 代理 =================
+    proxy_url = "socks5h://127.0.0.1:1824"
+    # 创建带有代理的 httpx 客户端
+    http_client = httpx.Client(proxy=proxy_url)
+
+    client = openai.OpenAI(
+        api_key=os.getenv("OPENAI_API_KEY"), 
+        base_url="https://aihubmix.com/v1" ,
+        http_client=http_client  # 传入自定义的 httpx 客户端
+    )  
+    # =========================================================
+    
     response = client.chat.completions.create(
         model=model_name,  # "gpt-4o-free",
         #   model="gpt-4o",
@@ -200,7 +214,7 @@ def run_judge(prediction_file, output_file):
             # ============ ⚠️ 调用结束 ============
             print("################result:", result)
 
-            judged_sample = {"id": sample_id, "answer": answer,  "short_answer": short_answer,  "judge": {"decision": decision, "explanation": result.get("Explanation"), "raw_output": raw_text, "judge_model": model_name}, "prediction": prediction, "Question": question,}
+            judged_sample = {"id": sample_id, "answer": answer,  "short_answer": short_answer, "Question": question, "judge": {"decision": decision, "explanation": result.get("Explanation"), "raw_output": raw_text, "judge_model": model_name}, "prediction": prediction,}
 
             fout.write(json.dumps(judged_sample, ensure_ascii=False) + "\n")
             fout.flush()
@@ -225,8 +239,8 @@ if __name__ == "__main__":
     # input_path = "results/GoogleSearch_qwen-3.5-9b_seal0/测试长wiki添加chunk/GoogleSearch_qwen-3.5-9b_seal0-all.jsonl"
     # output_path = "results/accuracy_google-seal0-wiki_chunk_juged.jsonl"
 
-    input_path = "outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/all.jsonl"
-    output_path = "outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/judge.jsonl"
+    input_path = "/root/autodl-tmp/project/Search-o1/outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/all.jsonl"
+    output_path = "/root/autodl-tmp/project/Search-o1/outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/4o-judge.jsonl"
 
     run_judge(input_path, output_path)
 

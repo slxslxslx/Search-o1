@@ -342,6 +342,7 @@ def run_evaluation(filtered_data, input_list, output_list, dataset_name, output_
         for item in filtered_data:
             simplified_item = {
                 "id": item.get("id"),
+                # "Question": item.get("Question"),
                 "answer": item.get("answer"),
                 "Pred_Answer": item.get("Pred_Answer"),
                 "Output": item.get("Output"),

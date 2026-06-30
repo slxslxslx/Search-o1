@@ -197,8 +197,8 @@ if __name__ == "__main__":
     # output_path = "results/accuracy_google-bamboogle-wiki_chunk_score.json"
 
 
-    file_path = "outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/all.jsonl"
-    output_path = "outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/score.json"
+    file_path = "/root/autodl-tmp/project/Search-o1/outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/4o-judge.jsonl"
+    output_path = "/root/autodl-tmp/project/Search-o1/outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/score.json"
 
     compute_score(file_path, output_path)
 
