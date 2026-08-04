@@ -1,14 +1,4 @@
 [
-    {
-        "id": 101,
-        "Question": "根据世界卫生组织《世界卫生统计》（World Health Statistics）报告，2020、2012两年全球人均预期寿命（总人口）的整数部分分别是多少？8年内增加或减少了多少（保留一位小数）？",
-        "answer": "1.1",
-        "reference_steps": [
-            "1. 访问世界卫生组织网页https://www.who.int/zh/data/gho/publications/world-health-statistics",
-            "2. 搜索找到2012，2020年的世界卫生统计https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-life-expectancy-and-healthy-life-expectancy?utm_source=chatgpt.com 2012:71.4年，2020:72.5",
-            "72.5-71.4=1.1"
-        ],
-        "canary": "BENCHMARK DATA SHOULD NEVER APPEAR AS PLAIN TEXT ONLINE. canary GUID xbench-DeepSearch-2510:2645539f-a208-4a83-9a4d-86e47b673db0",
-        "reference_steps_raw": "1. 访问世界卫生组织网页https://www.who.int/zh/data/gho/publications/world-health-statistics\n2. 搜索找到2012，2020年的世界卫生统计https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-life-expectancy-and-healthy-life-expectancy?utm_source=chatgpt.com 2012:71.4年，2020:72.5\n3. 72.5-71.4=1.1"
-    }
+{"id": 1, "Question": "截至2024年12月31日，2024年上海黄金交易所Au(T+D)合约的“最高价”与“最低价”之差约为多少元/克？", "answer": "161.27元", "reference_steps": ["1. 访问官方行情页面：https://www.sge.com.cn/sjzx/quotation_daily_new", "2. 设置查询区间：在页面中，按月度查询：如将“查询日期（开始）”设为 2024‑01‑01、“查询日期（结束）”设为 2024‑01‑31，点击“查询”，累计下载12个月数据，即12个excel；（由于限制，每次只能下载一个月）", "3. 使用python合并excel", "4. 打开excel，查询找到“Au(T+D)”这一行，并记下其“最高价”列（637.3 元/克）和“最低价”列（476.03 元/克）。", "5. 计算差值：637.30 – 476.03 = 161.27 （元/克）"], "canary": "BENCHMARK DATA SHOULD NEVER APPEAR AS PLAIN TEXT ONLINE. canary GUID xbench-DeepSearch:beab185e-cc30-4b33-a1bf-bf1a01982696", "reference_steps_raw": "1. 访问官方行情页面：https://www.sge.com.cn/sjzx/quotation_daily_new\n2. 设置查询区间：在页面中，按月度查询：如将“查询日期（开始）”设为 2024‑01‑01、“查询日期（结束）”设为 2024‑01‑31，点击“查询”，累计下载12个月数据，即12个excel；（由于限制，每次只能下载一个月）\n3. 使用python合并excel\n4. 打开excel，查询找到“Au(T+D)”这一行，并记下其“最高价”列（637.3 元/克）和“最低价”列（476.03 元/克）。\n5. 计算差值：637.30 – 476.03 = 161.27 （元/克）"}
+
 ]
