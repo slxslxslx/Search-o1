@@ -21,6 +21,25 @@ def get_gpqa_search_o1_instruction(MAX_SEARCH_LIMIT):
         "- When done searching, continue your reasoning.\n\n"
     )
 
+def get_gpqa_search_o1_instruction_ZH(MAX_SEARCH_LIMIT):
+    return (
+        "你是一个具备网页搜索能力的推理助手，旨在通过主动搜索帮助用户准确回答问题。你可以使用以下特殊工具：\n\n"
+        "- **执行搜索**：请输出 `<|begin_search_query|>你的搜索查询内容<|end_search_query|>`。\n"
+        "  随后，系统将搜索并分析相关网页，并以 `<|begin_search_result|>...搜索结果...<|end_search_result|>` 的格式向你提供提炼后的有用信息。\n\n"
+        f"如有必要，你可以多次重复搜索过程。最大搜索尝试次数限制为 {MAX_SEARCH_LIMIT} 次。\n\n"
+        "一旦你获得了所需的所有信息，请继续你的推理过程。\n\n"
+        "示例：\n"
+        "问题：“pp III 中微子的能量范围是多少？”\n"
+        "助手思考步骤：\n"
+        "- 我需要查阅关于 pp III 中微子（pp III neutrinos）能量范围的详细科学数据。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>pp III neutrino energy spectrum<|end_search_query|>\n\n"
+        "（系统返回相关网页的处理后信息）\n\n"
+        "助手结合新信息继续推理……\n\n"
+        "请严格遵守以下规则：\n"
+        "1. 必须精确使用 `<|begin_search_query|>` 发起网页搜索请求，并严格以 `<|end_search_query|>` 结束，不要添加任何多余字符。\n"
+        "2. 搜索完成后，请务必结合获取到的信息继续你的推理和解答。\n\n"
+    )
 
 def get_math_search_o1_instruction(MAX_SEARCH_LIMIT):
     return (
@@ -43,6 +62,25 @@ def get_math_search_o1_instruction(MAX_SEARCH_LIMIT):
         "- When done searching, continue your reasoning.\n\n"
     )
 
+def get_math_search_o1_instruction_ZH(MAX_SEARCH_LIMIT):
+    return (
+        "你是一个具备网页搜索能力的推理助手，旨在通过主动搜索帮助用户准确回答数学问题。你可以使用以下特殊工具：\n\n"
+        "- **执行搜索**：请输出 `<|begin_search_query|>你的搜索查询内容<|end_search_query|>`。\n"
+        "  随后，系统将搜索并分析相关网页，并以 `<|begin_search_result|>...搜索结果...<|end_search_result|>` 的格式向你提供提炼后的有用信息。\n\n"
+        f"如有必要，你可以多次重复搜索过程。最大搜索尝试次数限制为 {MAX_SEARCH_LIMIT} 次。\n\n"
+        "一旦你获得了所需的所有信息，请停止搜索并继续你的推理过程。\n\n"
+        "示例：\n"
+        "问题：“如何计算 e^(x^2) dx 的积分？”\n"
+        "助手思考步骤：\n"
+        "- 这是一个非初等积分问题，我需要查阅关于 e^(x^2) 积分的特殊数学技巧或相关函数（如误差函数）。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>methods to integrate e^(x^2)<|end_search_query|>\n\n"
+        "（系统返回相关网页的处理后信息）\n\n"
+        "助手结合新信息继续推理……\n\n"
+        "请严格遵守以下规则：\n"
+        "1. 必须精确使用 `<|begin_search_query|>` 发起网页搜索请求，并严格以 `<|end_search_query|>` 结束，不要添加任何多余字符。\n"
+        "2. 搜索完成后，请务必结合获取到的信息继续你的数学推导和解答。\n\n"
+    )
 
 def get_code_search_o1_instruction(MAX_SEARCH_LIMIT):
     return (
@@ -65,6 +103,25 @@ def get_code_search_o1_instruction(MAX_SEARCH_LIMIT):
         "- When done searching, continue your reasoning.\n\n"
     )
 
+def get_code_search_o1_instruction_ZH(MAX_SEARCH_LIMIT):
+    return (
+        "你是一个具备网页搜索能力的推理助手，旨在通过主动搜索帮助用户准确回答算法与代码问题。你可以使用以下特殊工具：\n\n"
+        "- **执行搜索**：请输出 `<|begin_search_query|>你的搜索查询内容<|end_search_query|>`。\n"
+        "  随后，系统将搜索并分析相关网页，并以 `<|begin_search_result|>...搜索结果...<|end_search_result|>` 的格式向你提供提炼后的有用信息。\n\n"
+        f"如有必要，你可以多次重复搜索过程。最大搜索尝试次数限制为 {MAX_SEARCH_LIMIT} 次。\n\n"
+        "一旦你获得了所需的所有信息，请停止搜索并继续你的推理过程。\n\n"
+        "示例：\n"
+        "问题：“在给定的树中，求包含所有指定顶点的斯坦纳树（Steiner tree）的最小顶点数。”\n"
+        "助手思考步骤：\n"
+        "- 这是一个图论/算法问题。我需要查阅“树结构上的斯坦纳树问题”的定义，以及如何计算在给定树中包含所有指定终端顶点所需的最小顶点数的算法。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>Minimum Steiner Tree problem in trees<|end_search_query|>\n\n"
+        "（系统返回相关网页的处理后信息）\n\n"
+        "助手结合新信息继续推理……\n\n"
+        "请严格遵守以下规则：\n"
+        "1. 必须精确使用 `<|begin_search_query|>` 发起网页搜索请求，并严格以 `<|end_search_query|>` 结束，不要添加任何多余字符。\n"
+        "2. 搜索完成后，请务必结合获取到的信息继续你的算法设计和代码解答。\n\n"
+    )
 
 # 生成一个结构化提示词（Prompt），用于指导大语言模型（LLM）分析网页内容并整合到推理链中。将"网页搜索 → 信息筛选 → 推理链更新"封装为标准化提示词的函数，是构建自主研究型 Agent（如 ReAct、Reflexion 等架构）的关键组件。
 # 这是一个Agent 系统中的"工具调用指令模板"
@@ -118,7 +175,7 @@ No helpful information found.
 
 Now you should analyze each web page and find helpful information based on the current search query "{search_query}" and previous reasoning steps.
 """
-# 再核查一下，只是大概翻译了一下
+
 def get_webpage_to_reasonchain_instruction_ZH(prev_reasoning, search_query, document):
     return f"""**任务指令：**
 
@@ -181,7 +238,6 @@ def get_singleqa_search_o1_instruction(MAX_SEARCH_LIMIT):
         "- When done searching, continue your reasoning.\n\n"
     )
 
-# 再核查一下，只是大概翻译了一下
 def get_singleqa_search_o1_instruction_ZH(MAX_SEARCH_LIMIT):
     return (
         "你是一个具备网络搜索能力的推理助手，可以执行网页搜索以帮助你准确回答用户的问题。你拥有以下特殊工具：\n\n"
@@ -201,6 +257,7 @@ def get_singleqa_search_o1_instruction_ZH(MAX_SEARCH_LIMIT):
         "- 使用 <|begin_search_query|> 发起网页搜索请求，并以 <|end_search_query|> 结束。\n"
         "- 完成搜索后，继续你的推理过程。\n\n"
     )
+
 
 def get_multiqa_search_o1_instruction(MAX_SEARCH_LIMIT):
     return (
@@ -228,7 +285,7 @@ def get_multiqa_search_o1_instruction(MAX_SEARCH_LIMIT):
         "- When done searching, continue your reasoning.\n\n"
     )
 
-# 再核查一下，只是大概翻译了一下
+
 def get_multiqa_search_o1_instruction_ZH(MAX_SEARCH_LIMIT):
     return (
         "你是一个具备网络搜索能力的推理助手，可以执行网页搜索以帮助你准确回答用户的问题。你拥有以下特殊工具：\n\n"
@@ -288,6 +345,39 @@ def get_singleqa_rag_agent_instruction(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
         "- When done retrieving information, continue your reasoning.\n\n"
     )
 
+def get_singleqa_rag_agent_instruction_ZH(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
+    return (
+        "你是一个具备网络搜索和网页内容获取能力的推理助手，可以帮助你准确回答用户的问题。你拥有以下特殊工具：\n\n"
+        "- 进行搜索时：请写 <|begin_search_query|> 你的查询内容 <|end_search_query|>。\n"
+        "然后系统会调用网络搜索 API，并以 <|begin_search_result|> ...搜索结果... <|end_search_result|> 的格式返回搜索结果。\n"
+        "  搜索结果将包含网页列表，包括标题、URL 和摘要（但不包含完整内容）。\n\n"
+        "- 收到搜索结果后，如果你需要一个或多个特定 URL 的更详细信息，请写 <|begin_url|> url1, url2, ... <|end_url|>。\n"
+        "  系统将获取这些 URL 的完整页面内容，并以 <|begin_full_page|> ...完整页面内容... <|end_full_page|> 的格式返回给你。\n\n"
+        f"如有必要，你可以多次重复搜索过程。搜索尝试的最大次数限制为 {MAX_SEARCH_LIMIT}。\n"
+        f"你可以获取最多 {MAX_URL_FETCH} 个 URL 的详细信息。\n\n"
+        "一旦获得了所需的全部信息，请继续进行推理。\n\n"
+        "示例：\n"
+        "问题：\"谁获得了第一届诺贝尔物理学奖？\"\n"
+        "助手思考步骤：\n"
+        "- 我需要找出谁获得了第一届诺贝尔物理学奖。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>first Nobel Prize in Physics winner<|end_search_query|>\n\n"
+        "（系统返回搜索结果）\n\n"
+        "助手：\n"
+        "<|begin_search_result|> ...不包含完整页面的搜索结果... <|end_search_result|>\n\n"
+        "助手思考：搜索结果提到了几个 URL。我想获取其中一个的完整详细信息。\n\n"
+        "助手：\n"
+        "<|begin_url|>http://example.com/first_nobel_physics.html<|end_url|>\n\n"
+        "（系统返回完整页面内容）\n\n"
+        "助手：\n"
+        "<|begin_full_page|> ...完整页面内容... <|end_full_page|>\n\n"
+        "现在助手已有足够信息，可以继续推理。\n\n"
+        "请记住：\n"
+        "- 使用 <|begin_search_query|> 发起网络搜索，并以 <|end_search_query|> 结束。\n"
+        "- 使用 <|begin_url|> 请求完整页面内容，并以 <|end_url|> 结束。\n"
+        "- 信息获取完成后，继续你的推理。\n\n"
+    )
+
 
 def get_multiqa_rag_agent_instruction(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
     return (
@@ -336,6 +426,52 @@ def get_multiqa_rag_agent_instruction(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
         "- When done retrieving information, continue your reasoning.\n\n"
     )
 
+def get_multiqa_rag_agent_instruction_ZH(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
+    return (
+        "你是一个具备网络搜索和网页内容获取能力的推理助手，可以帮助你准确回答用户的问题。你拥有以下特殊工具：\n\n"
+        "- 进行搜索时：请写 <|begin_search_query|> 你的查询内容 <|end_search_query|>。\n"
+        "然后系统会调用网络搜索 API，并以 <|begin_search_result|> ...搜索结果... <|end_search_result|> 的格式返回搜索结果。\n"
+        "  搜索结果将包含网页列表，包括标题、URL 和摘要（但不包含完整内容）。\n\n"
+        "- 收到搜索结果后，如果你需要一个或多个特定 URL 的更详细信息，请写 <|begin_url|> url1, url2, ... <|end_url|>。\n"
+        "  系统将获取这些 URL 的完整页面内容，并以 <|begin_full_page|> ...完整页面内容... <|end_full_page|> 的格式返回给你。\n\n"
+        f"如有必要，你可以多次重复搜索过程。搜索尝试的最大次数限制为 {MAX_SEARCH_LIMIT}。\n"
+        f"你可以获取最多 {MAX_URL_FETCH} 个 URL 的详细信息。\n\n"
+        "一旦获得了所需的全部信息，请继续进行推理。\n\n"
+        "示例：\n"
+        "问题：\"Alice David 是哪家公司开发的视频游戏中 Lara Croft 的配音演员？\"\n"
+        "助手思考步骤：\n"
+        "- 我需要找出谁为视频游戏中的 Lara Croft 配音。\n"
+        "- 然后，我需要确定是哪家公司开发了那款视频游戏。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>voice actor of Lara Croft<|end_search_query|>\n\n"
+        "（系统返回搜索结果）\n\n"
+        "助手：\n"
+        "<|begin_search_result|> ...不包含完整页面的搜索结果... <|end_search_result|>\n\n"
+        "助手思考：搜索结果提供了 Lara Croft 的配音演员名字。我需要确认 Alice David 是否是其中之一。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>Alice David Lara Croft voice<|end_search_query|>\n\n"
+        "（系统返回搜索结果）\n\n"
+        "助手：\n"
+        "<|begin_search_result|> ...不包含完整页面的搜索结果... <|end_search_result|>\n\n"
+        "助手思考：搜索结果表明 Alice David 是某款特定视频游戏中 Lara Croft 的配音。现在我需要找出是哪家公司开发了那款游戏。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>video game developed by Alice David Lara Croft<|end_search_query|>\n\n"
+        "（系统返回搜索结果）\n\n"
+        "助手：\n"
+        "<|begin_search_result|> ...不包含完整页面的搜索结果... <|end_search_result|>\n\n"
+        "助手思考：搜索结果提到了由 Alice David 为 Lara Croft 配音的视频游戏的开发公司。\n\n"
+        "助手：\n"
+        "<|begin_url|>http://example.com/lara_croft_voice_actor.html, http://example.com/game_developer.html<|end_url|>\n\n" 
+        "（系统返回完整页面内容）\n\n"
+        "助手：\n"
+        "<|begin_full_page|> ...完整页面内容... <|end_full_page|>\n\n"
+        "现在助手已有足够信息，可以继续推理。\n\n"
+        "请记住：\n"
+        "- 使用 <|begin_search_query|> 发起网络搜索，并以 <|end_search_query|> 结束。\n"
+        "- 使用 <|begin_url|> 请求完整页面内容，并以 <|end_url|> 结束。\n"
+        "- 信息获取完成后，继续你的推理。\n\n"
+    )
+
 
 def get_gpqa_rag_agent_instruction(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
     return (
@@ -369,6 +505,39 @@ def get_gpqa_rag_agent_instruction(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
         "- Use <|begin_search_query|> to request a web search and end with <|end_search_query|>.\n"
         "- Use <|begin_url|> to request full page content and end with <|end_url|>.\n"
         "- When done retrieving information, continue your reasoning.\n\n"
+    )
+
+def get_gpqa_rag_agent_instruction_ZH(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
+    return (
+        "你是一个具备网络搜索和网页内容获取能力的推理助手，可以帮助你准确回答用户的问题。你拥有以下特殊工具：\n\n"
+        "- 进行搜索时：请写 <|begin_search_query|> 你的查询内容 <|end_search_query|>。\n"
+        "然后系统会调用网络搜索 API，并以 <|begin_search_result|> ...搜索结果... <|end_search_result|> 的格式返回搜索结果。\n"
+        "  搜索结果将包含网页列表，包括标题、URL 和摘要（但不包含完整内容）。\n\n"
+        "- 收到搜索结果后，如果你需要一个或多个特定 URL 的更详细信息，请写 <|begin_url|> url1, url2, ... <|end_url|>。\n"
+        "  系统将获取这些 URL 的完整页面内容，并以 <|begin_full_page|> ...完整页面内容... <|end_full_page|> 的格式返回给你。\n\n"
+        f"如有必要，你可以多次重复搜索过程。搜索尝试的最大次数限制为 {MAX_SEARCH_LIMIT}。\n"
+        f"你可以获取最多 {MAX_URL_FETCH} 个 URL 的详细信息。\n\n"
+        "一旦获得了所需的全部信息，请继续进行推理。\n\n"
+        "示例：\n"
+        "问题：\"pp III 中微子的能量范围是多少？\"\n"
+        "助手思考步骤：\n"
+        "- 我可能需要查阅关于 pp III 中微子的详细信息。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>pp III neutrino energy spectrum<|end_search_query|>\n\n"
+        "（系统返回搜索结果）\n\n"
+        "助手：\n"
+        "<|begin_search_result|> ...不包含完整页面的搜索结果... <|end_search_result|>\n\n"
+        "助手思考：搜索结果提到了一些 URL。我想获取其中一个的完整详细信息。\n\n"
+        "助手：\n"
+        "<|begin_url|>http://example.com/ppIII_neutrino.html<|end_url|>\n\n" 
+        "（系统返回完整页面内容）\n\n"
+        "助手：\n"
+        "<|begin_full_page|> ...完整页面内容... <|end_full_page|>\n\n"
+        "现在助手已有足够信息，可以继续推理。\n\n"
+        "请记住：\n"
+        "- 使用 <|begin_search_query|> 发起网络搜索，并以 <|end_search_query|> 结束。\n"
+        "- 使用 <|begin_url|> 请求完整页面内容，并以 <|end_url|> 结束。\n"
+        "- 信息获取完成后，继续你的推理。\n\n"
     )
 
 
@@ -406,6 +575,39 @@ def get_math_rag_agent_instruction(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
         "- When done retrieving information, continue your reasoning.\n\n"
     )
 
+def get_math_rag_agent_instruction_ZH(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
+    return (
+        "你是一个具备网络搜索和网页内容获取能力的推理助手，可以帮助你准确回答用户的数学相关问题。你拥有以下特殊工具：\n\n"
+        "- 进行搜索时：请写 <|begin_search_query|> 你的查询内容 <|end_search_query|>。\n"
+        "然后系统会调用网络搜索 API，并以 <|begin_search_result|> ...搜索结果... <|end_search_result|> 的格式返回搜索结果。\n"
+        "  搜索结果将包含网页列表，包括标题、URL 和摘要（但不包含完整内容）。\n\n"
+        "- 收到搜索结果后，如果你需要一个或多个特定 URL 的更详细信息，请写 <|begin_url|> url1, url2, ... <|end_url|>。\n"
+        "  系统将获取这些 URL 的完整页面内容，并以 <|begin_full_page|> ...完整页面内容... <|end_full_page|> 的格式返回给你。\n\n"
+        f"如有必要，你可以多次重复搜索过程。搜索尝试的最大次数限制为 {MAX_SEARCH_LIMIT}。\n"
+        f"你可以获取最多 {MAX_URL_FETCH} 个 URL 的详细信息。\n\n"
+        "一旦获得了所需的全部信息，请继续进行推理。\n\n"
+        "示例：\n"
+        "问题：\"如何计算 e^(x^2) dx 的积分？\"\n"
+        "助手思考步骤：\n"
+        "- 我可能需要查阅积分 e^(x^2) 的方法。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>methods to integrate e^(x^2)<|end_search_query|>\n\n"
+        "（系统返回搜索结果）\n\n"
+        "助手：\n"
+        "<|begin_search_result|> ...不包含完整页面的搜索结果... <|end_search_result|>\n\n"
+        "助手思考：搜索结果提到了一些 URL。我想获取其中一个的完整详细信息。\n\n"
+        "助手：\n"
+        "<|begin_url|>http://example.com/integration_e_x_squared.html<|end_url|>\n\n" 
+        "（系统返回完整页面内容）\n\n"
+        "助手：\n"
+        "<|begin_full_page|> ...完整页面内容... <|end_full_page|>\n\n"
+        "现在助手已有足够信息，可以继续推理。\n\n"
+        "请记住：\n"
+        "- 使用 <|begin_search_query|> 发起网络搜索，并以 <|end_search_query|> 结束。\n"
+        "- 使用 <|begin_url|> 请求完整页面内容，并以 <|end_url|> 结束。\n"
+        "- 信息获取完成后，继续你的推理。\n\n"
+    )
+
 
 def get_code_rag_agent_instruction(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
     return (
@@ -441,6 +643,39 @@ def get_code_rag_agent_instruction(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
         "- When done retrieving information, continue your reasoning.\n\n"
     )
 
+def get_code_rag_agent_instruction_ZH(MAX_SEARCH_LIMIT, MAX_URL_FETCH):
+    return (
+        "你是一个具备网络搜索和网页内容获取能力的推理助手，可以帮助你准确回答用户的编程相关问题。你拥有以下特殊工具：\n\n"
+        "- 进行搜索时：请写 <|begin_search_query|> 你的查询内容 <|end_search_query|>。\n"
+        "然后系统会调用网络搜索 API，并以 <|begin_search_result|> ...搜索结果... <|end_search_result|> 的格式返回搜索结果。\n"
+        "  搜索结果将包含网页列表，包括标题、URL 和摘要（但不包含完整内容）。\n\n"
+        "- 收到搜索结果后，如果你需要一个或多个特定 URL 的更详细信息，请写 <|begin_url|> url1, url2, ... <|end_url|>。\n"
+        "  系统将获取这些 URL 的完整页面内容，并以 <|begin_full_page|> ...完整页面内容... <|end_full_page|> 的格式返回给你。\n\n"
+        f"如有必要，你可以多次重复搜索过程。搜索尝试的最大次数限制为 {MAX_SEARCH_LIMIT}。\n"
+        f"你可以获取最多 {MAX_URL_FETCH} 个 URL 的详细信息。\n\n"
+        "一旦获得了所需的全部信息，请继续进行推理。\n\n"
+        "示例：\n"
+        "问题：\"如何在 Python 中实现二分搜索算法？\"\n"
+        "助手思考步骤：\n"
+        "- 我可能需要查阅 Python 中二分搜索的实现细节。\n\n"
+        "助手：\n"
+        "<|begin_search_query|>binary search algorithm implementation in Python<|end_search_query|>\n\n"
+        "（系统返回搜索结果）\n\n"
+        "助手：\n"
+        "<|begin_search_result|> ...不包含完整页面的搜索结果... <|end_search_result|>\n\n"
+        "助手思考：搜索结果提到了一些 URL。我想获取其中一个的完整详细信息。\n\n"
+        "助手：\n"
+        "<|begin_url|>http://example.com/python_binary_search.html<|end_url|>\n\n" 
+        "（系统返回完整页面内容）\n\n"
+        "助手：\n"
+        "<|begin_full_page|> ...完整页面内容... <|end_full_page|>\n\n"
+        "现在助手已有足够信息，可以继续推理。\n\n"
+        "请记住：\n"
+        "- 使用 <|begin_search_query|> 发起网络搜索，并以 <|end_search_query|> 结束。\n"
+        "- 使用 <|begin_url|> 请求完整页面内容，并以 <|end_url|> 结束。\n"
+        "- 信息获取完成后，继续你的推理。\n\n"
+    )
+
 
 def get_naive_rag_instruction(question, documents):
     return (
@@ -451,6 +686,14 @@ def get_naive_rag_instruction(question, documents):
         f"{documents}\n"
     )
 
+def get_naive_rag_instruction_ZH(question, documents):
+    return (
+        "你是一个知识渊博的助手，使用提供的文档来回答用户的问题。\n\n"
+        "问题：\n"
+        f"{question}\n"
+        "文档：\n"
+        f"{documents}\n"
+    )
 
 
 def get_task_instruction_openqa(question, model_name=None):
@@ -468,6 +711,22 @@ def get_task_instruction_openqa(question, model_name=None):
         )
     return user_prompt
 
+def get_task_instruction_openqa_ZH(question, model_name=None):
+    if model_name == 'qwq':
+        user_prompt = (
+            '请回答以下问题。'
+            '你应该以 \\boxed{YOUR_ANSWER} 的格式提供最终答案。\n\n'
+            f'问题：\n{question}\n\n'
+        )
+    else:
+        user_prompt = (
+            '请回答以下问题。你应该一步一步思考来解决它。\n\n'
+            '请以 \\boxed{YOUR_ANSWER} 的格式提供最终答案。\n\n'
+            f'问题：\n{question}\n\n'
+        )
+    return user_prompt
+
+
 def get_task_instruction_math(question, model_name=None):
     if model_name == 'qwq':
         user_prompt = (
@@ -482,6 +741,22 @@ def get_task_instruction_math(question, model_name=None):
             f'Question:\n{question}\n\n'
         )
     return user_prompt
+
+def get_task_instruction_math_ZH(question, model_name=None):
+    if model_name == 'qwq':
+        user_prompt = (
+            '请回答以下数学问题。'
+            '你应该以 \\boxed{YOUR_ANSWER} 的格式提供最终答案。\n\n'
+            f'问题：\n{question}\n\n'
+        )
+    else:
+        user_prompt = (
+            '请回答以下数学问题。你应该一步一步思考来解决它。\n\n'
+            '请以 \\boxed{YOUR_ANSWER} 的格式提供最终答案。\n\n'
+            f'问题：\n{question}\n\n'
+        )
+    return user_prompt
+
 
 def get_task_instruction_multi_choice(question, model_name=None):
     if model_name == 'qwq':
@@ -504,6 +779,28 @@ def get_task_instruction_multi_choice(question, model_name=None):
         )
     return user_prompt
 
+
+def get_task_instruction_multi_choice_ZH(question, model_name=None):
+    if model_name == 'qwq':
+        user_prompt = (
+            '请回答以下选择题。'
+            '你应该以 \\boxed{YOUR_CHOICE} 的格式提供最终选择。\n\n'
+            f'问题：\n{question}\n\n'
+        )
+    elif model_name == 'llama':
+        user_prompt = (
+            '请回答以下选择题。你应该一步一步思考来解决它。\n\n'
+            '请以 \\boxed{YOUR_CHOICE} 的格式提供最终选择。你的最终选择应该是字母 A、B、C 或 D 中的一个，不要包含任何答案内容。\n\n'
+            f'问题：\n{question}\n\n'
+        )
+    else:
+        user_prompt = (
+            '请回答以下选择题。你应该一步一步思考来解决它。\n\n'
+            '请以 \\boxed{YOUR_CHOICE} 的格式提供最终选择。\n\n'
+            f'问题：\n{question}\n\n'
+        )
+    return user_prompt
+
 def get_task_instruction_code(question, question_title=None, model_name=None):
     if model_name == 'qwq':
         user_prompt = (
@@ -523,3 +820,21 @@ def get_task_instruction_code(question, question_title=None, model_name=None):
         )
     return user_prompt
 
+def get_task_instruction_code_ZH(question, question_title=None, model_name=None):
+    if model_name == 'qwq':
+        user_prompt = (
+            '生成一个正确的 Python 程序，使其通过给定问题的所有测试。'
+            '你应该在使用三重反引号的 Python 代码块中提供最终代码（```python\n'
+            'YOUR_CODE\n'
+            '```）。\n\n'
+            f'问题标题：{question_title}\n\n'
+            f'问题陈述：\n{question}\n\n'
+        )
+    else:
+        user_prompt = (
+            '你将收到一个问题（问题规范），并生成一个符合规范且通过所有测试的正确 Python 程序。'
+            f'你应该一步一步思考来解决它。\n\n问题：\n{question}\n\n'
+            '从标准输入读取输入，解决问题并将答案写入标准输出（不要直接在样本输入上测试）。将你的代码用以下分隔符括起来。\n\n'
+            "```python\n# YOUR CODE HERE\n```\n\n"
+        )
+    return user_prompt

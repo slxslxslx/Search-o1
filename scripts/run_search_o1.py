@@ -23,18 +23,18 @@ from evaluate import (
     run_evaluation, 
     extract_answer
 )
-from prompts import (
-    get_gpqa_search_o1_instruction, 
-    get_math_search_o1_instruction, 
-    get_code_search_o1_instruction, 
-    get_singleqa_search_o1_instruction, 
-    get_multiqa_search_o1_instruction,   # !!!
-    get_webpage_to_reasonchain_instruction,
-    get_task_instruction_openqa, 
-    get_task_instruction_math, 
-    get_task_instruction_multi_choice, 
-    get_task_instruction_code, 
-)
+# from prompts import (
+#     get_gpqa_search_o1_instruction, 
+#     get_math_search_o1_instruction, 
+#     get_code_search_o1_instruction, 
+#     get_singleqa_search_o1_instruction, 
+#     get_multiqa_search_o1_instruction,   # !!!
+#     get_webpage_to_reasonchain_instruction,
+#     get_task_instruction_openqa, 
+#     get_task_instruction_math, 
+#     get_task_instruction_multi_choice, 
+#     get_task_instruction_code, 
+# )
 
 # Define special tokens
 BEGIN_SEARCH_QUERY = "<|begin_search_query|>"
@@ -172,6 +172,7 @@ def parse_args():
         help="google Search API endpoint."
     )
 
+    parser.add_argument('--lang', type=str, default="en", help="language")
     return parser.parse_args()
 
 def main():
@@ -209,7 +210,32 @@ def main():
     
     if args.jina_api_key == 'None':
         jina_api_key = None
-
+    if args.lang == 'en':
+        from prompts import (
+            get_gpqa_search_o1_instruction, 
+            get_math_search_o1_instruction, 
+            get_code_search_o1_instruction, 
+            get_singleqa_search_o1_instruction, 
+            get_multiqa_search_o1_instruction,   # !!!
+            get_webpage_to_reasonchain_instruction,
+            get_task_instruction_openqa, 
+            get_task_instruction_math, 
+            get_task_instruction_multi_choice, 
+            get_task_instruction_code, 
+        )
+    elif args.lang == 'zh':
+        from prompts import (
+            get_gpqa_search_o1_instruction_ZH as get_gpqa_search_o1_instruction, 
+            get_math_search_o1_instruction_ZH as get_math_search_o1_instruction, 
+            get_code_search_o1_instruction_ZH as get_code_search_o1_instruction, 
+            get_singleqa_search_o1_instruction_ZH as get_singleqa_search_o1_instruction, 
+            get_multiqa_search_o1_instruction_ZH as get_multiqa_search_o1_instruction,   # !!!
+            get_webpage_to_reasonchain_instruction_ZH as get_webpage_to_reasonchain_instruction,
+            get_task_instruction_openqa_ZH as get_task_instruction_openqa, 
+            get_task_instruction_math_ZH as get_task_instruction_math, 
+            get_task_instruction_multi_choice_ZH as get_task_instruction_multi_choice, 
+            get_task_instruction_code_ZH as get_task_instruction_code, 
+        )
     # Set default repetition_penalty if not provided
     if repetition_penalty is None:
         repetition_penalty = 1.05 if 'qwq' in model_path.lower() else 1.0
