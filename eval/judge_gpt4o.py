@@ -239,7 +239,7 @@ if __name__ == "__main__":
     # input_path = "results/GoogleSearch_qwen-3.5-9b_seal0/测试长wiki添加chunk/GoogleSearch_qwen-3.5-9b_seal0-all.jsonl"
     # output_path = "results/accuracy_google-seal0-wiki_chunk_juged.jsonl"
 
-    input_path = "/root/autodl-tmp/project/Search-o1/outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/all.jsonl"
+    input_path = "/root/autodl-tmp/project/Search-o1/outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/all-cleaned.json"
     output_path = "/root/autodl-tmp/project/Search-o1/outputs/runs.baselines/seal0.qwen3.5-9b.search_o1/4o-judge.jsonl"
 
     run_judge(input_path, output_path)
