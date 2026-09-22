@@ -1,0 +1,23 @@
+[
+    {
+        "id": 31,
+        "Question": "<|im_start|>user\n你是一个具备网络搜索能力的推理助手，可以执行网页搜索以帮助你准确回答用户的问题。你拥有以下特殊工具：\n\n- 执行搜索：编写 <|begin_search_query|> 你的查询内容 <|end_search_query|>。\n随后，系统将搜索并分析相关网页，然后以 <|begin_search_result|> ...搜索结果... <|end_search_result|> 的格式向你提供有用信息。\n\n如有必要，你可以重复搜索过程多次。搜索尝试的最大次数限制为 10。\n\n一旦你获得了所需的全部信息，请继续你的推理过程。\n\n示例：\n问题：\"Alice David 是某款电子游戏中 Lara Croft 的配音演员，这款游戏由哪家公司开发？\"\n助手的思考步骤：\n- 我需要查明谁为电子游戏中的 Lara Croft 配音。\n- 然后，我需要确定那款电子游戏是由哪家公司开发的。\n\n助手：\n<|begin_search_query|>Alice David Lara Croft voice<|end_search_query|>\n\n（系统从相关网页返回处理后的信息）\n\n助手思考：搜索结果表明，Alice David 是某款特定电子游戏中 Lara Croft 的配音演员。现在，我需要查明那款游戏是由哪家公司开发的。\n\n助手：\n<|begin_search_query|>video game developed by Alice David Lara Croft<|end_search_query|>\n\n（系统从相关网页返回处理后的信息）\n\n助手继续结合新信息进行推理...\n\n请记住：\n- 使用 <|begin_search_query|> 发起网页搜索请求，并以 <|end_search_query|> 结束。\n- 完成搜索后，继续你的推理过程。\n\n请回答以下问题。你应该一步一步思考来解决它。\n\n请以 \\boxed{YOUR_ANSWER} 的格式提供最终答案。\n\n问题：\n截止到2025年5月1日，人工智能领域引用量超过25万次的paper的第一作者是谁<|im_end|>\n<|im_start|>assistant\n<think>\n",
+        "answer": "何恺明",
+        "reference_steps": [
+            "1. 截止到2025年5月1日，人工智能领域引用量超过25万次的paper是Deep Residual Learning for Imag Recognition",
+            "2. Deep Residual Learning for Imag Recognition的作者是何恺明、张祥雨、任少卿、孙剑",
+            "3. 第一作者是何恺明"
+        ],
+        "canary": "BENCHMARK DATA SHOULD NEVER APPEAR AS PLAIN TEXT ONLINE. canary GUID xbench-DeepSearch:beab185e-cc30-4b33-a1bf-bf1a01982696",
+        "reference_steps_raw": "1. 截止到2025年5月1日，人工智能领域引用量超过25万次的paper是Deep Residual Learning for Imag Recognition\n2. Deep Residual Learning for Imag Recognition的作者是何恺明、张祥雨、任少卿、孙剑\n3. 第一作者是何恺明",
+        "Output": "这是一个关于人工智能领域高引用论文的问题。我需要搜索相关信息来找到截止到2025年5月1日，人工智能领域引用量超过25万次的论文的第一作者。\n\n让我开始搜索这个问题。\n</think>\n\n<|begin_search_query|>人工智能领域引用量超过25万次论文第一作者 2025<|end_search_query|>\n\n<|begin_search_result|>[有帮助的信息]- **关键论文确认**：根据2025年4月至5月的多篇新闻报道（如Web Page 2, 4, 6, 7, 8），人工智能领域引用量超过25万次的论文确认为微软团队于2016年发表的《Deep Residual Learning for Image Recognition》（即ResNet）。- **第一作者信息**：该论文的第一作者为**何恺明 (Kaiming He)**。Web Page 2明确列出作者顺序为\"He, K., Zhang, X., Ren, S., & Sun, J.\"，Web Page 7也明确指出“何恺明作为第一作者的论文...是其学术影响力的核心支撑”。- **引用量数据**：截至2025年4月-5月，该论文在Google Scholar上的引用量已达到**25.4万次**（Web Page 2, 4, 6, 8），部分报道（如Web Page 7, 10）指出引用量甚至超过**29万次**，均满足“超过25万次”的条件。- **权威性背书**：《自然》（Nature）杂志在2025年4月的分析中将该论文列为21世纪被引用次数最多的论文（Web Page 2, 4, 6, 8），且在多个数据库（如Google Scholar）中排名首位或前列。- **时间有效性**：搜索到的网页日期为2025年4月17日至5月3日（Web Page 2, 4, 6, 8），符合“截止到2025年5月1日”的时间要求。- **其他高引用论文**：虽然Web Page 4和6提到21世纪高引用论文前十名中有6篇与AI相关（如AlexNet、Transformer等），但ResNet是唯一被确认引用量超过25万且排名榜首的AI论文。**推理整合建议：**可以将上述信息填入推理步骤中，确认ResNet论文及其第一作者何恺明为目标答案。需注意的是，Web Page 1和3主要讨论学者总引用量（如Bengio），而非单篇论文，需区分概念。Web Page 7和10提到的29万次引用量数据可作为补充佐证。<|end_search_result|>\n\n## 思考过程\n\n根据搜索结果，我需要进行以下推理步骤：\n\n### 步骤1：确认高引用AI论文\n从搜索结果来看，人工智能领域引用量超过25万次的论文是微软团队于2016年发表的**《Deep Residual Learning for Image Recognition》**（ResNet）。\n\n### 步骤2：确认引用量数据\n- 截至2025年4-5月，该论文在Google Scholar上的引用量已达到**25.4万次**\n- 部分报道指出引用量甚至超过**29万次**\n- 该论文被《自然》杂志列为21世纪被引用次数最多的论文之一\n\n### 步骤3：确认第一作者\n根据搜索结果中多个来源（Web Page 2, 4, 6, 7, 8）的确认：\n- 论文作者顺序为：**He, K., Zhang, X., Ren, S., & Sun, J.**\n- 第一作者为**何恺明 (Kaiming He)**\n\n### 步骤4：验证时间有效性\n搜索到的网页日期为2025年4月17日至5月3日，符合\"截止到2025年5月1日\"的时间要求。\n\n### 步骤5：排除其他可能性\n- 虽然有其他高引用AI论文（如AlexNet、Transformer等），但引用量均未超过25万次\n- 搜索结果中提到的学者总引用量（如Yann LeCun、Yoshua Bengio）与单篇论文引用量需区分\n\n## 最终答案\n\n\\boxed{何恺明}",
+        "Pred_Answer": "何恺明",
+        "Metrics": {
+            "is_valid_answer": true,
+            "acc": 1,
+            "em": 1,
+            "f1": 1.0,
+            "math_equal": 0
+        }
+    }
+]
