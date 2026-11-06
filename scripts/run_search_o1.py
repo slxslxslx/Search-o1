@@ -200,7 +200,7 @@ def main():
     jina_api_key = args.jina_api_key
     
     # Adjust parameters based on dataset
-    if dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki', 'medmcqa', 'pubhealth', 'seal0', 'XbenchDS']:
+    if dataset_name in ['nq', 'triviaqa', 'hotpotqa', 'musique', 'bamboogle', '2wiki', 'medmcqa', 'pubhealth', ]:
         MAX_SEARCH_LIMIT = 5
         if dataset_name in ['hotpotqa', 'musique', 'bamboogle', '2wiki', 'seal0', 'XbenchDS']:
             MAX_SEARCH_LIMIT = 10
